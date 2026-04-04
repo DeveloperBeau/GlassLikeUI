@@ -1,0 +1,28 @@
+{
+	"name": "glasslikeui",
+	"version": "0.1.0",
+	"description": "Component library for Svelte with liquid glass effects",
+	"license": "MIT",
+	"type": "module",
+	"main": "./index.ts",
+	"svelte": "./index.ts",
+	"exports": {
+		".": {
+			"svelte": "./index.ts",
+			"default": "./index.ts"
+		},
+		"./liquidglass.css": "./liquidglass.css"
+	},
+	"files": [
+		"*.svelte",
+		"*.ts",
+		"*.css"
+	],
+	"peerDependencies": {
+		"svelte": "^5.0.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/DeveloperBeau/GlassLikeUI"
+	}
+}
