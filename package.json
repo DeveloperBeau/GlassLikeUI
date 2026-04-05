@@ -4,25 +4,35 @@
 	"description": "Component library for Svelte with liquid glass effects",
 	"license": "MIT",
 	"type": "module",
-	"main": "./index.ts",
-	"svelte": "./index.ts",
+	"svelte": "./dist/index.js",
+	"types": "./dist/index.d.ts",
 	"exports": {
 		".": {
-			"svelte": "./index.ts",
-			"default": "./index.ts"
+			"types": "./dist/index.d.ts",
+			"svelte": "./dist/index.js",
+			"default": "./dist/index.js"
 		},
-		"./liquidglass.css": "./liquidglass.css"
+		"./liquidglass.css": "./dist/styles/liquidglass.css"
 	},
 	"files": [
-		"*.svelte",
-		"*.ts",
-		"*.css"
+		"dist"
 	],
+	"scripts": {
+		"package": "svelte-package",
+		"prepublishOnly": "npm run package"
+	},
 	"peerDependencies": {
 		"svelte": "^5.0.0"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/DeveloperBeau/GlassLikeUI"
+		"url": "git+https://github.com/DeveloperBeau/GlassLikeUI.git"
+	},
+	"devDependencies": {
+		"@sveltejs/package": "^2.5.7",
+		"@sveltejs/vite-plugin-svelte": "^7.0.0",
+		"svelte": "^5.55.1",
+		"typescript": "^5.9.3",
+		"vite": "^8.0.3"
 	}
 }
