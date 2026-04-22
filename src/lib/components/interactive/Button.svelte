@@ -3,7 +3,7 @@
 
 	interface Props {
 		children: Snippet;
-		variant?: 'filled' | 'glass' | 'outlined' | 'plain' | 'tinted';
+		variant?: 'filled' | 'glass' | 'outlined' | 'plain' | 'tinted' | 'destructive';
 		size?: 'sm' | 'md' | 'lg';
 		fullWidth?: boolean;
 		disabled?: boolean;
@@ -152,5 +152,22 @@
 
 	.button.variant-tinted:hover {
 		background: rgba(0, 113, 227, 0.25);
+	}
+
+	/* Destructive variant */
+	.button.variant-destructive {
+		background: var(--color-danger, #ef4444);
+		color: white;
+		box-shadow: 0 4px 16px -4px rgba(239, 68, 68, 0.5);
+	}
+
+	.button.variant-destructive:hover {
+		background: var(--color-danger-hover, #dc2626);
+		transform: translateY(-2px);
+		box-shadow: 0 8px 24px -4px rgba(239, 68, 68, 0.5);
+	}
+
+	.button.variant-destructive:active {
+		transform: translateY(0);
 	}
 </style>

@@ -12,8 +12,10 @@
 	interface Props {
 		tabs: Tab[];
 		activeTab?: string;
-		children: Snippet<[string]>;
+		children?: Snippet<[string]>;
 		position?: 'top' | 'bottom';
+		inline?: boolean;
+		onchange?: (id: string) => void;
 		class?: string;
 	}
 
@@ -22,20 +24,34 @@
 		activeTab = $bindable(tabs[0]?.id || ''),
 		children,
 		position = 'bottom',
+		inline = false,
+		onchange,
 		class: className = ''
 	}: Props = $props();
 
 	function selectTab(tabId: string) {
 		activeTab = tabId;
+		onchange?.(tabId);
 	}
 </script>
 
-<div class="tab-view {className}" class:position-bottom={position === 'bottom'}>
-	<div class="tab-content">
-		{@render children(activeTab)}
-	</div>
+<div
+	class="tab-view {className}"
+	class:position-bottom={position === 'bottom' && !inline}
+	class:inline
+>
+	{#if children}
+		<div class="tab-content">
+			{@render children(activeTab)}
+		</div>
+	{/if}
 
-	<LiquidGlass material="thick" cornerRadius="full" padding="xs" class="tab-bar-container">
+	<LiquidGlass
+		material="thick"
+		cornerRadius="full"
+		padding="xs"
+		class={inline ? 'tab-bar-container-inline' : 'tab-bar-container'}
+	>
 		<HStack spacing="xs" justify="center" class="tab-bar">
 			{#each tabs as tab}
 				<button
@@ -75,6 +91,15 @@
 		left: 50%;
 		transform: translateX(-50%);
 		z-index: 50;
+	}
+
+	:global(.tab-bar-container-inline) {
+		display: block;
+	}
+
+	.tab-view.inline {
+		display: block;
+		min-height: 0;
 	}
 
 	:global(.tab-bar) {

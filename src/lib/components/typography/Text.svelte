@@ -5,7 +5,7 @@
 		children: Snippet;
 		size?: 'xs' | 'sm' | 'body' | 'callout' | 'headline' | 'title1' | 'title2' | 'title3' | 'largeTitle' | 'hero';
 		weight?: 'regular' | 'medium' | 'semibold' | 'bold' | 'heavy';
-		color?: 'primary' | 'secondary' | 'tertiary' | 'accent' | 'white';
+		color?: 'primary' | 'secondary' | 'tertiary' | 'accent' | 'white' | 'danger';
 		alignment?: 'leading' | 'center' | 'trailing';
 		gradient?: boolean;
 		class?: string;
@@ -49,7 +49,8 @@
 		secondary: 'var(--color-text-secondary)',
 		tertiary: 'var(--color-text-tertiary)',
 		accent: 'var(--color-accent)',
-		white: '#ffffff'
+		white: '#ffffff',
+		danger: 'var(--color-danger, #ef4444)'
 	};
 
 	const alignmentMap = {
