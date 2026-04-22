@@ -1,11 +1,12 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import {
 	ICONS,
 	DEFAULT_ICON,
 	getIconPath,
 	hasIcon,
-	getIconNames
-} from '../../icons';
+	getIconNames,
+	registerIcons
+} from '../../src/lib/icons';
 
 describe('Icons Module', () => {
 	describe('ICONS constant', () => {
@@ -116,6 +117,83 @@ describe('Icons Module', () => {
 		it('should have expected minimum count of icons', () => {
 			const names = getIconNames();
 			expect(names.length).toBeGreaterThanOrEqual(25);
+		});
+	});
+
+	describe('security icon pack', () => {
+		it.each([
+			'shield', 'shield.fill', 'lock', 'lock.fill', 'lock.shield',
+			'key', 'eye', 'eye.slash', 'faceid'
+		])('should have %s icon', (name) => {
+			expect(ICONS).toHaveProperty(name);
+		});
+	});
+
+	describe('editor / document icon pack', () => {
+		it.each([
+			'trash', 'pencil', 'paintbrush', 'wand.and.stars',
+			'doc.text', 'doc.on.clipboard', 'doc.on.doc',
+			'folder.badge.plus', 'tray', 'sidebar.left',
+			'clock', 'number', 'asterisk', 'textformat',
+			'textformat.abc', 'creditcard', 'arrow.clockwise',
+			'arrow.triangle.2.circlepath', 'person.text.rectangle'
+		])('should have %s icon', (name) => {
+			expect(ICONS).toHaveProperty(name);
+		});
+	});
+
+	describe('registerIcons', () => {
+		afterEach(() => {
+			delete ICONS['test.custom'];
+			delete ICONS['test.other'];
+		});
+
+		it('adds a new icon by name', () => {
+			registerIcons({ 'test.custom': '<circle cx="12" cy="12" r="5"></circle>' });
+			expect(hasIcon('test.custom')).toBe(true);
+			expect(getIconPath('test.custom')).toContain('<circle');
+		});
+
+		it('adds multiple icons at once', () => {
+			registerIcons({
+				'test.custom': '<path d="M1 1"></path>',
+				'test.other': '<path d="M2 2"></path>'
+			});
+			expect(hasIcon('test.custom')).toBe(true);
+			expect(hasIcon('test.other')).toBe(true);
+		});
+
+		it('overrides an existing icon when re-registered', () => {
+			const original = ICONS['star'];
+			try {
+				registerIcons({ star: '<path d="M0 0"></path>' });
+				expect(getIconPath('star')).toBe('<path d="M0 0"></path>');
+			} finally {
+				ICONS['star'] = original;
+			}
+		});
+	});
+
+	describe('getIconPath fallback warning', () => {
+		it('warns when an unknown icon is requested', () => {
+			const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+			try {
+				getIconPath('definitely-not-a-real-icon');
+				expect(spy).toHaveBeenCalledOnce();
+				expect(spy.mock.calls[0][0]).toContain('definitely-not-a-real-icon');
+			} finally {
+				spy.mockRestore();
+			}
+		});
+
+		it('does not warn for known icons', () => {
+			const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+			try {
+				getIconPath('star');
+				expect(spy).not.toHaveBeenCalled();
+			} finally {
+				spy.mockRestore();
+			}
 		});
 	});
 });
