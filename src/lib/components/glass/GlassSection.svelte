@@ -1,12 +1,17 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import LiquidGlass from './LiquidGlass.svelte';
+	import Glass from './Glass.svelte';
+	import type { GlassVariant, GlassIntensity } from '../../constants/variants';
+
+	// Prefer reserving glass for navigation-layer chrome. Content-heavy
+	// sections usually read better with a solid or tonal background.
 
 	interface Props {
 		children: Snippet;
 		title?: string;
 		subtitle?: string;
-		material?: 'ultraThin' | 'thin' | 'regular' | 'thick' | 'ultraThick';
+		variant?: GlassVariant;
+		intensity?: GlassIntensity;
 		fullWidth?: boolean;
 		class?: string;
 	}
@@ -15,7 +20,8 @@
 		children,
 		title = '',
 		subtitle = '',
-		material = 'thin',
+		variant = 'regular',
+		intensity = 'subtle',
 		fullWidth = false,
 		class: className = ''
 	}: Props = $props();
@@ -33,9 +39,9 @@
 		</div>
 	{/if}
 
-	<LiquidGlass {material} padding="lg" cornerRadius="xl">
+	<Glass {variant} {intensity} padding="lg" cornerRadius="xl">
 		{@render children()}
-	</LiquidGlass>
+	</Glass>
 </section>
 
 <style>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	interface Props {
 		label: string;
-		variant?: 'default' | 'accent' | 'glass';
+		variant?: 'default' | 'accent';
 		size?: 'sm' | 'md';
 		class?: string;
 	}
@@ -45,16 +45,8 @@
 	}
 
 	.badge.variant-accent {
-		background: rgba(0, 113, 227, 0.15);
+		background: var(--color-accent-15);
 		color: var(--color-accent);
-		border: 1px solid rgba(0, 113, 227, 0.2);
-	}
-
-	.badge.variant-glass {
-		background: var(--glass-button-bg);
-		backdrop-filter: blur(8px);
-		-webkit-backdrop-filter: blur(8px);
-		color: var(--color-text);
-		border: 1px solid var(--glass-border);
+		border: 1px solid var(--color-accent-25);
 	}
 </style>

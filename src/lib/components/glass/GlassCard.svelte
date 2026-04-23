@@ -1,12 +1,18 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import LiquidGlass from './LiquidGlass.svelte';
+	import Glass from './Glass.svelte';
+	import type { GlassVariant, GlassIntensity } from '../../constants/variants';
+
+	// Note: GlassCard wraps content in a glass surface. Prefer reserving glass
+	// for navigation-layer chrome; for pure content, a solid fill is usually
+	// the right call.
 
 	interface Props {
 		children: Snippet;
 		header?: Snippet;
 		footer?: Snippet;
-		material?: 'ultraThin' | 'thin' | 'regular' | 'thick' | 'ultraThick' | 'chrome';
+		variant?: GlassVariant;
+		intensity?: GlassIntensity;
 		padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 		interactive?: boolean;
 		class?: string;
@@ -16,14 +22,15 @@
 		children,
 		header,
 		footer,
-		material = 'regular',
+		variant = 'regular',
+		intensity = 'standard',
 		padding = 'none',
 		interactive = false,
 		class: className = ''
 	}: Props = $props();
 </script>
 
-<LiquidGlass {material} {padding} {interactive} class="glass-card {className}">
+<Glass {variant} {intensity} {padding} {interactive} class="glass-card {className}">
 	{#if header}
 		<div class="card-header">
 			{@render header()}
@@ -39,7 +46,7 @@
 			{@render footer()}
 		</div>
 	{/if}
-</LiquidGlass>
+</Glass>
 
 <style>
 	:global(.glass-card) {

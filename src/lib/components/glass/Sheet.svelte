@@ -122,8 +122,8 @@
 		right: 0;
 		bottom: 0;
 		background: var(--glass-sheet-bg);
-		backdrop-filter: blur(60px) saturate(2);
-		-webkit-backdrop-filter: blur(60px) saturate(2);
+		backdrop-filter: blur(var(--glass-blur-nav)) saturate(var(--glass-saturation));
+		-webkit-backdrop-filter: blur(var(--glass-blur-nav)) saturate(var(--glass-saturation));
 		border-radius: var(--glass-radius-xl) var(--glass-radius-xl) 0 0;
 		overflow: hidden;
 		display: flex;

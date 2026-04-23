@@ -1,12 +1,22 @@
 import { describe, expect, it } from 'vitest';
 
 describe('library smoke test', () => {
-	it('exports core components', async () => {
+	it('exports core glass components', async () => {
 		const lib = await import('../src/lib');
-		expect(lib.LiquidGlass).toBeDefined();
+		expect(lib.Glass).toBeDefined();
 		expect(lib.GlassCard).toBeDefined();
+		expect(lib.GlassSection).toBeDefined();
 		expect(lib.Sheet).toBeDefined();
+		expect(lib.LensFilters).toBeDefined();
+		expect(lib.GlassDimLayer).toBeDefined();
+	});
+
+	it('exports interactive + nav components', async () => {
+		const lib = await import('../src/lib');
 		expect(lib.Button).toBeDefined();
+		expect(lib.IconButton).toBeDefined();
+		expect(lib.Badge).toBeDefined();
+		expect(lib.TabView).toBeDefined();
 		expect(lib.NavigationBar).toBeDefined();
 	});
 
@@ -15,6 +25,8 @@ describe('library smoke test', () => {
 		expect(lib.CORNER_RADIUS).toBeDefined();
 		expect(lib.SPACING).toBeDefined();
 		expect(lib.PADDING).toBeDefined();
+		expect(lib.VARIANT_CONFIG).toBeDefined();
+		expect(lib.INTENSITY_CONFIG).toBeDefined();
 	});
 
 	it('exports icon utilities', async () => {

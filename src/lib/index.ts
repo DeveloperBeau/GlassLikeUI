@@ -1,8 +1,5 @@
 /**
- * LiquidGlass Component Library
- * Component library for Svelte with liquid glass effects
- *
- * @packageDocumentation
+ * GlassLikeUI — Svelte component library with frosted glass materials.
  */
 
 // Components

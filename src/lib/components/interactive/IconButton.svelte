@@ -3,7 +3,7 @@
 
 	interface Props {
 		children: Snippet;
-		variant?: 'plain' | 'glass' | 'filled';
+		variant?: 'plain' | 'filled';
 		size?: 'sm' | 'md' | 'lg';
 		label?: string;
 		onclick?: (e: MouseEvent) => void;
@@ -61,17 +61,6 @@
 
 	.icon-button.variant-plain:hover {
 		background: var(--glass-hover-subtle);
-	}
-
-	.icon-button.variant-glass {
-		background: var(--glass-button-bg);
-		backdrop-filter: blur(12px);
-		-webkit-backdrop-filter: blur(12px);
-		border: 1px solid var(--glass-border);
-	}
-
-	.icon-button.variant-glass:hover {
-		background: var(--glass-button-hover);
 	}
 
 	.icon-button.variant-filled {

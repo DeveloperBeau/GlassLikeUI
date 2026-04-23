@@ -19,7 +19,7 @@ describe('Badge Component', () => {
 	});
 
 	describe('Variants', () => {
-		const variants = ['default', 'accent', 'glass'] as const;
+		const variants = ['default', 'accent'] as const;
 
 		it.each(variants)('should apply %s variant class', (variant) => {
 			const { container } = render(Badge, {

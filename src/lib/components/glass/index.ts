@@ -1,8 +1,6 @@
-/**
- * Glass Effect Components
- * Components with iOS-style liquid glass morphism effects
- */
-export { default as LiquidGlass } from './LiquidGlass.svelte';
+export { default as Glass } from './Glass.svelte';
 export { default as GlassCard } from './GlassCard.svelte';
 export { default as GlassSection } from './GlassSection.svelte';
 export { default as Sheet } from './Sheet.svelte';
+export { default as LensFilters } from './LensFilters.svelte';
+export { default as GlassDimLayer } from './GlassDimLayer.svelte';

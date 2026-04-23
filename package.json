@@ -1,7 +1,7 @@
 {
 	"name": "glasslikeui",
 	"version": "0.2.2",
-	"description": "Component library for Svelte with liquid glass effects",
+	"description": "Svelte component library with frosted glass materials",
 	"license": "MIT",
 	"type": "module",
 	"svelte": "./dist/index.js",
@@ -12,7 +12,7 @@
 			"svelte": "./dist/index.js",
 			"default": "./dist/index.js"
 		},
-		"./liquidglass.css": "./dist/styles/liquidglass.css"
+		"./glasslikeui.css": "./dist/styles/glasslikeui.css"
 	},
 	"files": [
 		"dist"

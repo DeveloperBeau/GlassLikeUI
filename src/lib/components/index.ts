@@ -1,5 +1,5 @@
 /**
- * LiquidGlass Components
+ * Glass Components
  * All component exports
  */
 

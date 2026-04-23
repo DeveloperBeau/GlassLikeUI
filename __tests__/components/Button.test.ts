@@ -31,7 +31,7 @@ describe('Button Component', () => {
 	});
 
 	describe('Variants', () => {
-		const variants = ['filled', 'glass', 'outlined', 'plain', 'tinted'] as const;
+		const variants = ['filled', 'outlined', 'plain', 'tinted', 'destructive'] as const;
 
 		it.each(variants)('should apply %s variant class', (variant) => {
 			const { container } = render(ButtonWrapper, {

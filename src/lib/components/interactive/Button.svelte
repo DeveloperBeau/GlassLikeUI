@@ -3,7 +3,7 @@
 
 	interface Props {
 		children: Snippet;
-		variant?: 'filled' | 'glass' | 'outlined' | 'plain' | 'tinted' | 'destructive';
+		variant?: 'filled' | 'outlined' | 'plain' | 'tinted' | 'destructive';
 		size?: 'sm' | 'md' | 'lg';
 		fullWidth?: boolean;
 		disabled?: boolean;
@@ -106,29 +106,6 @@
 		box-shadow: 0 2px 10px -4px var(--color-accent-50);
 	}
 
-	/* Glass variant */
-	.button.variant-glass {
-		background: var(--glass-button-bg);
-		backdrop-filter: blur(20px) saturate(1.8);
-		-webkit-backdrop-filter: blur(20px) saturate(1.8);
-		color: var(--color-text);
-		border: 1px solid var(--glass-border);
-		box-shadow:
-			inset 0 1px 0 0 var(--glass-highlight),
-			0 4px 16px -4px var(--glass-shadow);
-	}
-
-	.button.variant-glass:hover {
-		background: var(--glass-button-hover);
-		box-shadow:
-			inset 0 1px 0 0 var(--glass-highlight),
-			0 8px 24px -6px var(--glass-shadow);
-	}
-
-	.button.variant-glass:active {
-		background: var(--glass-active-bg);
-	}
-
 	/* Outlined variant */
 	.button.variant-outlined {
 		background: transparent;
@@ -174,18 +151,18 @@
 
 	/* Destructive variant */
 	.button.variant-destructive {
-		background: var(--color-danger, #ef4444);
+		background: var(--color-danger);
 		color: white;
-		box-shadow: 0 4px 16px -4px color-mix(in srgb, var(--color-danger, #ef4444) 50%, transparent);
+		box-shadow: 0 4px 16px -4px color-mix(in srgb, var(--color-danger) 50%, transparent);
 	}
 
 	.button.variant-destructive:hover {
-		background: var(--color-danger-hover, #dc2626);
-		box-shadow: 0 8px 28px -6px color-mix(in srgb, var(--color-danger, #ef4444) 50%, transparent);
+		background: var(--color-danger-hover);
+		box-shadow: 0 8px 28px -6px color-mix(in srgb, var(--color-danger) 50%, transparent);
 	}
 
 	.button.variant-destructive:active {
-		background: color-mix(in srgb, var(--color-danger, #ef4444) 85%, black);
-		box-shadow: 0 2px 10px -4px color-mix(in srgb, var(--color-danger, #ef4444) 50%, transparent);
+		background: var(--color-danger-active);
+		box-shadow: 0 2px 10px -4px color-mix(in srgb, var(--color-danger) 50%, transparent);
 	}
 </style>

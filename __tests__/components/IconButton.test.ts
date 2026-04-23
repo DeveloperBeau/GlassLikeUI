@@ -33,7 +33,7 @@ describe('IconButton Component', () => {
 	});
 
 	describe('Variants', () => {
-		const variants = ['plain', 'glass', 'filled'] as const;
+		const variants = ['plain', 'filled'] as const;
 
 		it.each(variants)('should apply %s variant class', (variant) => {
 			const { container } = render(IconButtonWrapper, {

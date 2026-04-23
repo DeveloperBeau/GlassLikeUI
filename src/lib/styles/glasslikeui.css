@@ -1,0 +1,202 @@
+/* GlassLikeUI v1 design tokens.
+ * Import in your global styles. Mount <LensFilters /> once at app root
+ * for SVG filter defs.
+ */
+
+:root {
+	/* ========================================
+	   Glass surface tokens (dark mode default)
+	   ======================================== */
+
+	/* Base surface color — variant-driven opacity applied at runtime */
+	--glass-surface-color: 28, 28, 30;
+	--glass-opacity: 0.30;
+	--glass-surface-bg: rgba(var(--glass-surface-color), var(--glass-opacity));
+
+	/* Core effect parameters (intensity-driven) */
+	--glass-blur: 20px;
+	--glass-displacement-scale: 8;
+	--glass-saturation: 1.8;
+
+	/* Edge + highlight tokens */
+	--glass-border: rgba(255, 255, 255, 0.12);
+	--glass-border-width: 0.5px;
+	--glass-highlight: rgba(255, 255, 255, 0.08);
+	--glass-shadow: rgba(0, 0, 0, 0.5);
+	--glass-shadow-inner: rgba(0, 0, 0, 0.2);
+	--glass-divider: rgba(255, 255, 255, 0.08);
+	--glass-handle: rgba(255, 255, 255, 0.3);
+	--glass-highlight-angle: 135deg;
+	--glass-motion-enabled: 1;
+
+	/* Interaction states */
+	--glass-hover-bg: rgba(255, 255, 255, 0.08);
+	--glass-hover-subtle: rgba(255, 255, 255, 0.04);
+	--glass-active-bg: rgba(255, 255, 255, 0.12);
+	--glass-active-subtle: rgba(255, 255, 255, 0.06);
+
+	/* Component helpers */
+	--glass-button-bg: rgba(255, 255, 255, 0.1);
+	--glass-button-hover: rgba(255, 255, 255, 0.15);
+	--glass-badge-bg: rgba(255, 255, 255, 0.08);
+
+	/* Navigation chrome */
+	--glass-nav-bg: rgba(0, 0, 0, 0.7);
+	--glass-blur-nav: 24px;
+
+	/* Sheet chrome */
+	--glass-sheet-bg: rgba(28, 28, 30, 0.80);
+
+	/* ========================================
+	   Accent system
+	   ======================================== */
+	--color-accent: #0071e3;
+	--color-accent-hover: color-mix(in srgb, var(--color-accent) 85%, white);
+	--color-accent-active: color-mix(in srgb, var(--color-accent) 85%, black);
+	--color-accent-10: color-mix(in srgb, var(--color-accent) 10%, transparent);
+	--color-accent-15: color-mix(in srgb, var(--color-accent) 15%, transparent);
+	--color-accent-25: color-mix(in srgb, var(--color-accent) 25%, transparent);
+	--color-accent-50: color-mix(in srgb, var(--color-accent) 50%, transparent);
+
+	/* Semantic danger — adapts to light/dark via color-mix */
+	--color-danger: #ef4444;
+	--color-danger-hover: color-mix(in srgb, var(--color-danger) 85%, white);
+	--color-danger-active: color-mix(in srgb, var(--color-danger) 85%, black);
+
+	/* ========================================
+	   Radius system
+	   ======================================== */
+	--glass-radius-sm: 12px;
+	--glass-radius-md: 18px;
+	--glass-radius-lg: 24px;
+	--glass-radius-xl: 32px;
+	--glass-radius-2xl: 44px;
+	--glass-radius-full: 9999px;
+
+	/* ========================================
+	   Spacing system
+	   ======================================== */
+	--spacing-xs: 0.5rem;
+	--spacing-sm: 1rem;
+	--spacing-md: 1.5rem;
+	--spacing-lg: 2.5rem;
+	--spacing-xl: 4rem;
+	--spacing-2xl: 6rem;
+
+	/* ========================================
+	   Transitions
+	   ======================================== */
+	--transition: 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
+	--transition-fast: 0.15s cubic-bezier(0.25, 0.1, 0.25, 1);
+	--transition-spring: 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+
+	/* ========================================
+	   Layout caps
+	   ======================================== */
+	--max-width: 1200px;
+	--max-width-wide: 1440px;
+
+	/* ========================================
+	   Typography (cross-platform SF Pro stack)
+	   SF Pro on macOS/iOS, Segoe UI on Windows, Roboto on Linux/Android,
+	   then generic fallbacks. Not applied to :root — scoped to components
+	   via var(--font-system) to avoid overriding consumer body font.
+	   ======================================== */
+	--font-system: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro',
+		'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	--font-system-mono: ui-monospace, 'SF Mono', Menlo, 'Cascadia Mono',
+		'Roboto Mono', 'Courier New', monospace;
+	--dynamic-type-scale: 1;
+}
+
+/* ========================================
+   Light mode overrides
+   ======================================== */
+:root[data-theme='light'] {
+	--glass-surface-color: 255, 255, 255;
+	--glass-opacity: 0.22;
+
+	--glass-border: rgba(0, 0, 0, 0.06);
+	--glass-highlight: rgba(255, 255, 255, 0.8);
+	--glass-shadow: rgba(0, 0, 0, 0.12);
+	--glass-shadow-inner: rgba(0, 0, 0, 0.04);
+	--glass-divider: rgba(0, 0, 0, 0.06);
+	--glass-handle: rgba(0, 0, 0, 0.2);
+
+	--glass-hover-bg: rgba(0, 0, 0, 0.04);
+	--glass-hover-subtle: rgba(0, 0, 0, 0.02);
+	--glass-active-bg: rgba(0, 0, 0, 0.08);
+	--glass-active-subtle: rgba(0, 0, 0, 0.04);
+
+	--glass-button-bg: rgba(0, 0, 0, 0.05);
+	--glass-button-hover: rgba(0, 0, 0, 0.08);
+	--glass-badge-bg: rgba(0, 0, 0, 0.04);
+
+	--glass-nav-bg: rgba(255, 255, 255, 0.85);
+	--glass-sheet-bg: rgba(255, 255, 255, 0.88);
+}
+
+/* ========================================
+   Accessibility — dual path
+   Native media queries (Safari) + data-attribute fallback (cross-browser)
+   Consumers on Chrome/Firefox can wire matchMedia into data-attrs manually.
+   ======================================== */
+
+@media (prefers-reduced-transparency: reduce) {
+	:root {
+		--glass-opacity: 0.95;
+		--glass-blur: 0px;
+		--glass-displacement-scale: 0;
+		--glass-saturation: 1;
+	}
+}
+:root[data-reduced-transparency='true'] {
+	--glass-opacity: 0.95;
+	--glass-blur: 0px;
+	--glass-displacement-scale: 0;
+	--glass-saturation: 1;
+}
+
+@media (prefers-contrast: more) {
+	:root {
+		--glass-border-width: 1.5px;
+		--glass-opacity: 0.98;
+	}
+}
+:root[data-contrast='more'] {
+	--glass-border-width: 1.5px;
+	--glass-opacity: 0.98;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:root {
+		--transition: 0s;
+		--transition-fast: 0s;
+		--transition-spring: 0s;
+		--glass-motion-enabled: 0;
+	}
+}
+:root[data-reduced-motion='true'] {
+	--transition: 0s;
+	--transition-fast: 0s;
+	--transition-spring: 0s;
+	--glass-motion-enabled: 0;
+}
+
+/* ========================================
+   No backdrop-filter support — opaque fallback
+   ======================================== */
+@supports not (backdrop-filter: blur(1px)) {
+	:root {
+		--glass-opacity: 0.92;
+	}
+}
+
+/* ========================================
+   Performance — reduce effect cost on small viewports
+   ======================================== */
+@media (max-width: 768px) {
+	:root {
+		--glass-blur-nav: 16px;
+	}
+}

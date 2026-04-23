@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { LiquidGlass } from '../glass';
+	import { Glass } from '../glass';
 	import { HStack } from '../layout';
 
 	interface Tab {
@@ -46,8 +46,9 @@
 		</div>
 	{/if}
 
-	<LiquidGlass
-		material="thick"
+	<Glass
+		variant="regular"
+		intensity="prominent"
 		cornerRadius="full"
 		padding="xs"
 		class={inline ? 'tab-bar-container-inline' : 'tab-bar-container'}
@@ -66,7 +67,7 @@
 				</button>
 			{/each}
 		</HStack>
-	</LiquidGlass>
+	</Glass>
 </div>
 
 <style>

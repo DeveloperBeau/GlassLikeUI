@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { LiquidGlass } from '../glass';
+	import { Glass } from '../glass';
 
 	interface Props {
 		children: Snippet;
@@ -20,9 +20,9 @@
 		{@render children()}
 	</div>
 {:else}
-	<LiquidGlass material="regular" padding="none" cornerRadius="xl" class="list list-{listStyle} {className}">
+	<Glass variant="regular" intensity="standard" padding="none" cornerRadius="xl" class="list list-{listStyle} {className}">
 		{@render children()}
-	</LiquidGlass>
+	</Glass>
 {/if}
 
 <style>

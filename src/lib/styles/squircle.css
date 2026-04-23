@@ -1,0 +1,17 @@
+/* Squircle corner utility.
+ * Uses clip-path with a normalized (objectBoundingBox) path so the shape
+ * scales correctly with element dimensions. Apply .glass-squircle to any
+ * element that should have continuous-curve corners instead of circular.
+ * Falls back to CSS border-radius where the clip-path is unsupported.
+ */
+
+.glass-squircle {
+	clip-path: url(#glass-squircle-path);
+}
+
+@supports (corner-shape: superellipse(2)) {
+	.glass-squircle {
+		clip-path: none;
+		corner-shape: superellipse(2.5);
+	}
+}

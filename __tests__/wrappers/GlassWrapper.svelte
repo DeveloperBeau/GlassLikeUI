@@ -1,33 +1,46 @@
 <script lang="ts">
-	import { GlassCard } from '$lib';
+	import { Glass } from '$lib';
 	import type { GlassVariant, GlassIntensity } from '$lib';
 
 	interface Props {
 		content?: string;
-		headerText?: string;
 		variant?: GlassVariant;
 		intensity?: GlassIntensity;
+		tint?: string;
+		cornerRadius?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
 		padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+		shadow?: boolean;
 		interactive?: boolean;
 		class?: string;
+		style?: string;
 	}
 
 	let {
-		content = 'Card Content',
-		headerText = 'Header',
+		content = 'Glass Content',
 		variant = 'regular',
 		intensity = 'standard',
-		padding = 'none',
+		tint = '',
+		cornerRadius = 'lg',
+		padding = 'md',
+		shadow = true,
 		interactive = false,
-		class: className = ''
+		class: className = '',
+		style = ''
 	}: Props = $props();
 </script>
 
-<GlassCard {variant} {intensity} {padding} {interactive} class={className}>
-	{#snippet header()}
-		<div class="header">{headerText}</div>
-	{/snippet}
+<Glass
+	{variant}
+	{intensity}
+	{tint}
+	{cornerRadius}
+	{padding}
+	{shadow}
+	{interactive}
+	class={className}
+	{style}
+>
 	{#snippet children()}
 		<div class="content">{content}</div>
 	{/snippet}
-</GlassCard>
+</Glass>
