@@ -111,8 +111,9 @@ export function getIconPath(name: string): string {
 	if (path !== undefined) {
 		return path;
 	}
-	if (typeof process !== 'undefined' && process.env?.NODE_ENV !== 'production') {
-		console.warn(`[glasslikeui] unknown icon "${name}", falling back to "${DEFAULT_ICON}". Register it via registerIcons({ "${name}": "<svg…/>" }).`);
+	const env = (globalThis as { process?: { env?: { NODE_ENV?: string } } }).process?.env;
+	if (!env || env.NODE_ENV !== 'production') {
+		console.warn(`[glasslikeui] unknown icon "${name}", falling back to "${DEFAULT_ICON}". Register it via registerIcons({ "${name}": "<svg...>" }).`);
 	}
 	return ICONS[DEFAULT_ICON];
 }
