@@ -1,7 +1,8 @@
 {
 	"compilerOptions": {
-		"target": "ESNext",
-		"module": "ESNext",
+		"target": "es2025",
+		"module": "esnext",
+		"lib": ["es2025", "dom", "dom.asynciterable"],
 		"moduleResolution": "bundler",
 		"declaration": true,
 		"strict": true,

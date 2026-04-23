@@ -2,6 +2,8 @@
   Mount once at app root. Provides SVG filter defs used by .glass-surface.has-lensing
   for edge refraction on the frosted backdrop layer.
 -->
+<script lang="ts"></script>
+
 <svg class="glass-lens-defs" aria-hidden="true" focusable="false" width="0" height="0">
 	<defs>
 		<filter id="glass-lens-refract" x="-10%" y="-10%" width="120%" height="120%">
