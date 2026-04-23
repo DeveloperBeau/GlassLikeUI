@@ -80,7 +80,8 @@
 <style>
 	.text {
 		display: block;
-		font-size: var(--text-size);
+		font-family: var(--font-system);
+		font-size: calc(var(--text-size) * var(--dynamic-type-scale, 1));
 		line-height: var(--text-line-height);
 		font-weight: var(--text-weight);
 		color: var(--text-color);

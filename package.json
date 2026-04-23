@@ -12,7 +12,10 @@
 			"svelte": "./dist/index.js",
 			"default": "./dist/index.js"
 		},
-		"./glasslikeui.css": "./dist/styles/glasslikeui.css"
+		"./glasslikeui.css": "./dist/styles/glasslikeui.css",
+		"./lens.css": "./dist/styles/lens.css",
+		"./squircle.css": "./dist/styles/squircle.css",
+		"./typography.css": "./dist/styles/typography.css"
 	},
 	"files": [
 		"dist"

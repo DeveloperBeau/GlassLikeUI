@@ -1,10 +1,18 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import {
+		scrollEdge,
+		type ScrollEdgeEffect,
+		type ScrollEdgeWhich
+	} from '../../actions/scrollEdge';
 
 	interface Props {
 		children: Snippet;
 		axis?: 'vertical' | 'horizontal' | 'both';
 		showsIndicators?: boolean;
+		edgeEffect?: 'none' | ScrollEdgeEffect;
+		edges?: ScrollEdgeWhich;
+		edgeSize?: string;
 		class?: string;
 	}
 
@@ -12,15 +20,30 @@
 		children,
 		axis = 'vertical',
 		showsIndicators = true,
+		edgeEffect = 'none',
+		edges = 'bottom',
+		edgeSize,
 		class: className = ''
 	}: Props = $props();
 </script>
 
-<div class="scroll-view axis-{axis} {className}" class:hide-indicators={!showsIndicators}>
-	<div class="scroll-content">
-		{@render children()}
+{#if edgeEffect === 'none'}
+	<div class="scroll-view axis-{axis} {className}" class:hide-indicators={!showsIndicators}>
+		<div class="scroll-content">
+			{@render children()}
+		</div>
 	</div>
-</div>
+{:else}
+	<div
+		class="scroll-view axis-{axis} {className}"
+		class:hide-indicators={!showsIndicators}
+		use:scrollEdge={{ edges, effect: edgeEffect, size: edgeSize }}
+	>
+		<div class="scroll-content">
+			{@render children()}
+		</div>
+	</div>
+{/if}
 
 <style>
 	.scroll-view {

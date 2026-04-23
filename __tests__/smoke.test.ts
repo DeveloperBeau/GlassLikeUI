@@ -19,6 +19,15 @@ describe('library smoke test', () => {
 		expect(lib.isViewTransitionsSupported).toBeDefined();
 	});
 
+	it('exports action + a11y helpers', async () => {
+		const lib = await import('../src/lib');
+		expect(lib.scrollEdge).toBeDefined();
+		expect(lib.dragSnap).toBeDefined();
+		expect(lib.syncAccessibilityPreferences).toBeDefined();
+		expect(lib.detentFractions).toBeDefined();
+		expect(lib.DEFAULT_DETENT_FRACTIONS).toBeDefined();
+	});
+
 	it('exports interactive + nav components', async () => {
 		const lib = await import('../src/lib');
 		expect(lib.Button).toBeDefined();

@@ -1,0 +1,27 @@
+/* Typography tokens.
+ * SF Pro where available, then Segoe UI (Windows), Roboto (Linux/Android),
+ * Helvetica/Arial, and finally the system sans-serif fallback.
+ *
+ * Tokens are exposed as CSS custom properties but are NOT applied to :root
+ * so that they don't override the consumer's own body font. Library
+ * components opt in via `font-family: var(--font-system)`.
+ */
+
+:root {
+	--font-system: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro',
+		'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	--font-system-mono: ui-monospace, 'SF Mono', Menlo, 'Cascadia Mono',
+		'Roboto Mono', 'Courier New', monospace;
+	--dynamic-type-scale: 1;
+}
+
+/* Consumer can opt in globally like this:
+ *   body { font-family: var(--font-system); }
+ * or use these utility classes on specific elements:
+ */
+.font-system {
+	font-family: var(--font-system);
+}
+.font-system-mono {
+	font-family: var(--font-system-mono);
+}

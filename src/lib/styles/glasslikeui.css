@@ -96,17 +96,7 @@
 	--max-width: 1200px;
 	--max-width-wide: 1440px;
 
-	/* ========================================
-	   Typography (cross-platform SF Pro stack)
-	   SF Pro on macOS/iOS, Segoe UI on Windows, Roboto on Linux/Android,
-	   then generic fallbacks. Not applied to :root — scoped to components
-	   via var(--font-system) to avoid overriding consumer body font.
-	   ======================================== */
-	--font-system: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro',
-		'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-	--font-system-mono: ui-monospace, 'SF Mono', Menlo, 'Cascadia Mono',
-		'Roboto Mono', 'Courier New', monospace;
-	--dynamic-type-scale: 1;
+	/* Typography tokens are defined in styles/typography.css. */
 }
 
 /* ========================================
