@@ -19,7 +19,10 @@
 	],
 	"scripts": {
 		"package": "svelte-package",
-		"prepublishOnly": "npm run package"
+		"prepublishOnly": "npm run package",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:coverage": "vitest run --coverage"
 	},
 	"peerDependencies": {
 		"svelte": "^5.0.0"
@@ -31,8 +34,13 @@
 	"devDependencies": {
 		"@sveltejs/package": "^2.5.7",
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",
+		"@testing-library/jest-dom": "^6.9.1",
+		"@testing-library/svelte": "^5.3.1",
+		"@vitest/coverage-v8": "^4.1.5",
+		"jsdom": "^29.0.2",
 		"svelte": "^5.55.1",
 		"typescript": "^5.9.3",
-		"vite": "^8.0.3"
+		"vite": "^8.0.3",
+		"vitest": "^4.1.5"
 	}
 }

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/svelte';
-import { Spacer } from '$lib/liquidglass';
+import { Spacer } from '$lib';
 
 describe('Spacer Component', () => {
 	describe('Rendering', () => {

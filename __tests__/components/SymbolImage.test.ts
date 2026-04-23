@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/svelte';
-import { SymbolImage } from '$lib/liquidglass';
-import { ICON_SIZES, TEXT_COLORS } from '$lib/liquidglass/constants';
-import { ICONS } from '$lib/liquidglass/icons';
+import { SymbolImage } from '$lib';
+import { ICON_SIZES, TEXT_COLORS } from '$lib/constants';
+import { ICONS } from '$lib/icons';
 
 describe('SymbolImage Component', () => {
 	describe('Rendering', () => {

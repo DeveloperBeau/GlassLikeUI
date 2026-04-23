@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/svelte';
 import LiquidGlassWrapper from '../wrappers/LiquidGlassWrapper.svelte';
-import { MATERIAL_CONFIG, CORNER_RADIUS, PADDING } from '$lib/liquidglass/constants';
+import { MATERIAL_CONFIG, CORNER_RADIUS, PADDING } from '$lib/constants';
 
 describe('LiquidGlass Component', () => {
 	describe('Rendering', () => {

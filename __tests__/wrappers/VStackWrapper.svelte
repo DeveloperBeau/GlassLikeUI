@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { VStack } from '$lib/liquidglass';
+	import { VStack } from '$lib';
 
 	interface Props {
 		content?: string;

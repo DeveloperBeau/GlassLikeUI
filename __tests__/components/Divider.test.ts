@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/svelte';
-import { Divider } from '$lib/liquidglass';
+import { Divider } from '$lib';
 
 describe('Divider Component', () => {
 	describe('Rendering', () => {

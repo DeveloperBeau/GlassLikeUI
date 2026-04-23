@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Text } from '$lib/liquidglass';
+	import { Text } from '$lib';
 
 	interface Props {
 		content?: string;

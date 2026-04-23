@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { IconButton, SymbolImage } from '$lib/liquidglass';
+	import { IconButton, SymbolImage } from '$lib';
 
 	interface Props {
 		icon?: string;

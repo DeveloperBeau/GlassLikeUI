@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ZStack } from '$lib/liquidglass';
+	import { ZStack } from '$lib';
 
 	interface Props {
 		content?: string;

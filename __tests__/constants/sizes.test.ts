@@ -4,7 +4,7 @@ import {
 	CORNER_RADIUS,
 	PADDING,
 	SPACING
-} from '../../constants/sizes';
+} from '../../src/lib/constants/sizes';
 
 describe('Size Constants', () => {
 	describe('ICON_SIZES', () => {

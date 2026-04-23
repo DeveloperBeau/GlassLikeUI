@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { MATERIAL_CONFIG } from '../../constants/materials';
-import type { MaterialConfig } from '../../constants/materials';
+import { MATERIAL_CONFIG } from '../../src/lib/constants/materials';
+import type { MaterialConfig } from '../../src/lib/constants/materials';
 
 describe('Material Constants', () => {
 	describe('MATERIAL_CONFIG', () => {

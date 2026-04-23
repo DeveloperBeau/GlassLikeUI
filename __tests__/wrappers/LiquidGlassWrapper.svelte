@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { LiquidGlass } from '$lib/liquidglass';
-	import type { MaterialType, CornerRadius, Padding } from '$lib/liquidglass/constants';
+	import { LiquidGlass } from '$lib';
+	import type { MaterialType, CornerRadius, Padding } from '$lib/constants';
 
 	interface Props {
 		content?: string;

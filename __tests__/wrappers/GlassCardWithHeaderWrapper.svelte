@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { GlassCard } from '$lib/liquidglass';
+	import { GlassCard } from '$lib';
 
 	interface Props {
 		content?: string;

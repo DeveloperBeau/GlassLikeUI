@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Grid } from '$lib/liquidglass';
+	import { Grid } from '$lib';
 
 	interface Props {
 		content?: string;

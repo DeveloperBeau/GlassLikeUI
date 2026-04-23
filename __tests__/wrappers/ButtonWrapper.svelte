@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button } from '$lib/liquidglass';
+	import { Button } from '$lib';
 
 	interface Props {
 		text?: string;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { TEXT_COLORS, BG_COLORS } from '../../constants/colors';
+import { TEXT_COLORS, BG_COLORS } from '../../src/lib/constants/colors';
 
 describe('Color Constants', () => {
 	describe('TEXT_COLORS', () => {
