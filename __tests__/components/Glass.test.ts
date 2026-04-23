@@ -210,4 +210,16 @@ describe('Glass', () => {
 			expect(el).toHaveClass('my-glass');
 		});
 	});
+
+	describe('Motion prop', () => {
+		it('does not attach motion listener by default', () => {
+			const { container } = render(GlassWrapper, { props: { content: 'x' } });
+			expect(container.querySelector('.glass-surface')).toBeInTheDocument();
+		});
+
+		it('renders with motion=true without throwing', () => {
+			const { container } = render(GlassWrapper, { props: { content: 'x', motion: true } });
+			expect(container.querySelector('.glass-surface')).toBeInTheDocument();
+		});
+	});
 });

@@ -9,6 +9,7 @@
 		type GlassIntensity
 	} from '../../constants/variants';
 	import { CORNER_RADIUS, PADDING, type CornerRadius, type Padding } from '../../constants';
+	import { deviceMotion } from '../../actions/deviceMotion';
 
 	interface Props {
 		children: Snippet;
@@ -19,6 +20,7 @@
 		padding?: Padding;
 		shadow?: boolean;
 		interactive?: boolean;
+		motion?: boolean;
 		class?: string;
 		style?: string;
 	}
@@ -32,6 +34,7 @@
 		padding = 'md',
 		shadow = true,
 		interactive = false,
+		motion = false,
 		class: className = '',
 		style: customStyle = ''
 	}: Props = $props();
@@ -40,26 +43,50 @@
 	const vcfg = $derived(VARIANT_CONFIG[variant]);
 </script>
 
-<div
-	class="glass-surface {variant} {className}"
-	class:has-lensing={cfg.displacementScale > 0}
-	class:has-shadow={shadow}
-	class:is-interactive={interactive}
-	style="
-		--glass-blur: {cfg.blur}px;
-		--glass-saturation: {cfg.saturation};
-		--glass-displacement-scale: {cfg.displacementScale};
-		--glass-opacity: {vcfg.opacityDark};
-		--glass-radius: {CORNER_RADIUS[cornerRadius]};
-		{tint ? `--glass-surface-bg: ${tint};` : ''}
-		padding: {PADDING[padding]};
-		{customStyle}
-	"
->
-	<div class="glass-content">
-		{@render children()}
+{#if motion}
+	<div
+		class="glass-surface {variant} {className}"
+		class:has-lensing={cfg.displacementScale > 0}
+		class:has-shadow={shadow}
+		class:is-interactive={interactive}
+		use:deviceMotion
+		style="
+			--glass-blur: {cfg.blur}px;
+			--glass-saturation: {cfg.saturation};
+			--glass-displacement-scale: {cfg.displacementScale};
+			--glass-opacity: {vcfg.opacityDark};
+			--glass-radius: {CORNER_RADIUS[cornerRadius]};
+			{tint ? `--glass-surface-bg: ${tint};` : ''}
+			padding: {PADDING[padding]};
+			{customStyle}
+		"
+	>
+		<div class="glass-content">
+			{@render children()}
+		</div>
 	</div>
-</div>
+{:else}
+	<div
+		class="glass-surface {variant} {className}"
+		class:has-lensing={cfg.displacementScale > 0}
+		class:has-shadow={shadow}
+		class:is-interactive={interactive}
+		style="
+			--glass-blur: {cfg.blur}px;
+			--glass-saturation: {cfg.saturation};
+			--glass-displacement-scale: {cfg.displacementScale};
+			--glass-opacity: {vcfg.opacityDark};
+			--glass-radius: {CORNER_RADIUS[cornerRadius]};
+			{tint ? `--glass-surface-bg: ${tint};` : ''}
+			padding: {PADDING[padding]};
+			{customStyle}
+		"
+	>
+		<div class="glass-content">
+			{@render children()}
+		</div>
+	</div>
+{/if}
 
 <style>
 	.glass-surface {

@@ -28,6 +28,13 @@ describe('library smoke test', () => {
 		expect(lib.DEFAULT_DETENT_FRACTIONS).toBeDefined();
 	});
 
+	it('exports device motion helpers', async () => {
+		const lib = await import('../src/lib');
+		expect(lib.deviceMotion).toBeDefined();
+		expect(lib.requestMotionPermission).toBeDefined();
+		expect(lib.isDeviceMotionSupported).toBeDefined();
+	});
+
 	it('exports interactive + nav components', async () => {
 		const lib = await import('../src/lib');
 		expect(lib.Button).toBeDefined();

@@ -11,6 +11,7 @@
 		padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 		shadow?: boolean;
 		interactive?: boolean;
+		motion?: boolean;
 		class?: string;
 		style?: string;
 	}
@@ -24,6 +25,7 @@
 		padding = 'md',
 		shadow = true,
 		interactive = false,
+		motion = false,
 		class: className = '',
 		style = ''
 	}: Props = $props();
@@ -37,6 +39,7 @@
 	{padding}
 	{shadow}
 	{interactive}
+	{motion}
 	class={className}
 	{style}
 >
