@@ -133,8 +133,9 @@ describe('dragSnap action', () => {
 		// onSnap fires with a detent index; direction may depend on sample timing,
 		// so just assert it was called and the index is valid.
 		expect(onSnap).toHaveBeenCalled();
-		const [idx] = onSnap.mock.calls[0];
-		expect([0, 1, 2]).toContain(idx);
+		const firstCall = onSnap.mock.calls[0];
+		expect(firstCall).toBeDefined();
+		expect([0, 1, 2]).toContain(firstCall?.[0]);
 		handle.destroy();
 	});
 

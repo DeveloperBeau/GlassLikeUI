@@ -3,7 +3,7 @@
 
 	interface Props {
 		icon?: string;
-		variant?: 'plain' | 'glass' | 'filled';
+		variant?: 'plain' | 'filled';
 		size?: 'sm' | 'md' | 'lg';
 		label?: string;
 		onclick?: (e: MouseEvent) => void;

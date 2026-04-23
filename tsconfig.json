@@ -10,10 +10,18 @@
 		"forceConsistentCasingInFileNames": true,
 		"resolveJsonModule": true,
 		"isolatedModules": true,
-		"verbatimModuleSyntax": true
+		"verbatimModuleSyntax": true,
+		"noUncheckedIndexedAccess": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitOverride": true,
+		"exactOptionalPropertyTypes": true,
+		"paths": {
+			"$lib": ["./src/lib"],
+			"$lib/*": ["./src/lib/*"]
+		}
 	},
-	"include": [
-		"src/**/*"
-	],
-	"exclude": ["node_modules", "dist", "__tests__"]
+	"include": ["src/**/*", "__tests__/**/*"],
+	"exclude": ["node_modules", "dist"]
 }

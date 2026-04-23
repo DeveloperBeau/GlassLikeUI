@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { withGlassTransition, isViewTransitionsSupported } from '../../src/lib/actions/viewTransition';
 
-type AnyDoc = Document & {
+type AnyDoc = Omit<Document, 'startViewTransition'> & {
 	startViewTransition?: (cb: () => void | Promise<void>) => unknown;
 };
 

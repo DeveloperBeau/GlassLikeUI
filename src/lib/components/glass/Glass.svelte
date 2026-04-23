@@ -161,8 +161,4 @@
 	.glass-surface.is-interactive:active {
 		transform: scale(calc(1 - 0.005 * var(--glass-motion-enabled)));
 	}
-
-	:global(:root[data-theme='light']) .glass-surface {
-		/* opacity override handled by :root[data-theme='light'] in global vars */
-	}
 </style>

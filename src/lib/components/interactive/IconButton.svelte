@@ -5,8 +5,8 @@
 		children: Snippet;
 		variant?: 'plain' | 'filled';
 		size?: 'sm' | 'md' | 'lg';
-		label?: string;
-		onclick?: (e: MouseEvent) => void;
+		label?: string | undefined;
+		onclick?: ((e: MouseEvent) => void) | undefined;
 		class?: string;
 	}
 

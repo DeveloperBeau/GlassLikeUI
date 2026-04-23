@@ -47,7 +47,7 @@ export function dragSnap(node: HTMLElement, initialOptions: DragSnapOptions) {
 	let dragging = false;
 	let pointerId: number | null = null;
 	let startY = 0;
-	let startFraction = options.detents[currentIndex];
+	let startFraction = detentAt(options.detents, currentIndex);
 	let samples: PointerSample[] = [];
 
 	const target = () => options.target ?? node;
@@ -74,7 +74,7 @@ export function dragSnap(node: HTMLElement, initialOptions: DragSnapOptions) {
 		dragging = true;
 		pointerId = event.pointerId;
 		startY = event.clientY;
-		startFraction = options.detents[currentIndex];
+		startFraction = detentAt(options.detents, currentIndex);
 		samples = [{ y: event.clientY, t: performance.now() }];
 
 		try {
@@ -135,8 +135,9 @@ export function dragSnap(node: HTMLElement, initialOptions: DragSnapOptions) {
 		}
 
 		currentIndex = nextIndex;
-		applyFraction(options.detents[currentIndex], true);
-		options.onSnap?.(currentIndex, options.detents[currentIndex]);
+		const snappedFraction = detentAt(options.detents, currentIndex);
+		applyFraction(snappedFraction, true);
+		options.onSnap?.(currentIndex, snappedFraction);
 
 		try {
 			node.releasePointerCapture(event.pointerId);
@@ -149,7 +150,7 @@ export function dragSnap(node: HTMLElement, initialOptions: DragSnapOptions) {
 		if (!dragging || event.pointerId !== pointerId) return;
 		dragging = false;
 		pointerId = null;
-		applyFraction(options.detents[currentIndex], true);
+		applyFraction(detentAt(options.detents, currentIndex), true);
 	}
 
 	node.addEventListener('pointerdown', onPointerDown);
@@ -165,14 +166,14 @@ export function dragSnap(node: HTMLElement, initialOptions: DragSnapOptions) {
 		el.style.setProperty('--sheet-y', '100vh');
 		const raf =
 			typeof requestAnimationFrame === 'function' ? requestAnimationFrame : (cb: () => void) => cb();
-		raf(() => applyFraction(options.detents[currentIndex], true));
+		raf(() => applyFraction(detentAt(options.detents, currentIndex), true));
 	}
 
 	return {
 		update(newOptions: DragSnapOptions) {
 			options = { ...newOptions };
 			currentIndex = clampIndex(options.initial ?? currentIndex, options.detents.length);
-			applyFraction(options.detents[currentIndex], true);
+			applyFraction(detentAt(options.detents, currentIndex), true);
 		},
 		destroy() {
 			node.removeEventListener('pointerdown', onPointerDown);
@@ -188,11 +189,17 @@ function clampIndex(i: number, len: number): number {
 	return Math.max(0, Math.min(i, len - 1));
 }
 
+function detentAt(detents: number[], index: number): number {
+	return detents[index] ?? detents[0] ?? 0;
+}
+
 function nearestDetentIndex(fraction: number, detents: number[]): number {
 	let bestIndex = 0;
 	let bestDistance = Infinity;
 	for (let i = 0; i < detents.length; i++) {
-		const d = Math.abs(detents[i] - fraction);
+		const value = detents[i];
+		if (value === undefined) continue;
+		const d = Math.abs(value - fraction);
 		if (d < bestDistance) {
 			bestDistance = d;
 			bestIndex = i;
@@ -205,6 +212,7 @@ function computeVelocity(samples: PointerSample[]): number {
 	if (samples.length < 2) return 0;
 	const first = samples[0];
 	const last = samples[samples.length - 1];
+	if (!first || !last) return 0;
 	const dt = (last.t - first.t) / 1000;
 	if (dt <= 0) return 0;
 	return (last.y - first.y) / dt;

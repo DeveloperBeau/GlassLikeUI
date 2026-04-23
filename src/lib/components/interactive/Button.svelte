@@ -7,8 +7,8 @@
 		size?: 'sm' | 'md' | 'lg';
 		fullWidth?: boolean;
 		disabled?: boolean;
-		href?: string;
-		onclick?: (e: MouseEvent) => void;
+		href?: string | undefined;
+		onclick?: ((e: MouseEvent) => void) | undefined;
 		class?: string;
 	}
 

@@ -12,10 +12,10 @@ export type ScrollEdgeWhich = 'top' | 'bottom' | 'both' | 'none';
 export type ScrollEdgeEffect = 'soft' | 'hard';
 
 export interface ScrollEdgeOptions {
-	edges?: ScrollEdgeWhich;
-	effect?: ScrollEdgeEffect;
+	edges?: ScrollEdgeWhich | undefined;
+	effect?: ScrollEdgeEffect | undefined;
 	/** Fade distance in CSS length (e.g., '32px', '2rem'). Default 32px soft / 4px hard. */
-	size?: string;
+	size?: string | undefined;
 }
 
 export function scrollEdge(node: HTMLElement, initialOptions: ScrollEdgeOptions = {}) {

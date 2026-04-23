@@ -115,7 +115,7 @@ export function getIconPath(name: string): string {
 	if (!env || env.NODE_ENV !== 'production') {
 		console.warn(`[glasslikeui] unknown icon "${name}", falling back to "${DEFAULT_ICON}". Register it via registerIcons({ "${name}": "<svg...>" }).`);
 	}
-	return ICONS[DEFAULT_ICON];
+	return ICONS[DEFAULT_ICON] ?? '';
 }
 
 /** Check if icon exists */

@@ -169,7 +169,7 @@ describe('Icons Module', () => {
 				registerIcons({ star: '<path d="M0 0"></path>' });
 				expect(getIconPath('star')).toBe('<path d="M0 0"></path>');
 			} finally {
-				ICONS['star'] = original;
+				if (original !== undefined) ICONS['star'] = original;
 			}
 		});
 	});
@@ -180,7 +180,7 @@ describe('Icons Module', () => {
 			try {
 				getIconPath('definitely-not-a-real-icon');
 				expect(spy).toHaveBeenCalledOnce();
-				expect(spy.mock.calls[0][0]).toContain('definitely-not-a-real-icon');
+				expect(spy.mock.calls[0]?.[0]).toContain('definitely-not-a-real-icon');
 			} finally {
 				spy.mockRestore();
 			}

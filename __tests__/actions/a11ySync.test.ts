@@ -15,10 +15,10 @@ function mockMatchMedia(matches: Record<string, boolean>) {
 			media: query,
 			onchange: null,
 			addEventListener: (_: string, cb: Listener) => {
-				listeners[query].push(cb);
+				(listeners[query] ??= []).push(cb);
 			},
 			removeEventListener: (_: string, cb: Listener) => {
-				listeners[query] = listeners[query].filter((fn) => fn !== cb);
+				listeners[query] = (listeners[query] ?? []).filter((fn) => fn !== cb);
 			},
 			addListener: () => {},
 			removeListener: () => {},

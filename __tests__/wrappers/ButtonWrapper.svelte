@@ -3,7 +3,7 @@
 
 	interface Props {
 		text?: string;
-		variant?: 'filled' | 'glass' | 'outlined' | 'plain' | 'tinted';
+		variant?: 'filled' | 'outlined' | 'plain' | 'tinted' | 'destructive';
 		size?: 'sm' | 'md' | 'lg';
 		fullWidth?: boolean;
 		disabled?: boolean;

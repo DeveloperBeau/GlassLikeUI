@@ -9,7 +9,7 @@
 		alignment?: 'leading' | 'center' | 'trailing';
 		gradient?: boolean;
 		class?: string;
-		id?: string;
+		id?: string | undefined;
 	}
 
 	let {
