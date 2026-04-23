@@ -101,6 +101,50 @@ attributes on non-Safari browsers:
 | `syncAccessibilityPreferences`   | Bridges `prefers-*` media to data-attrs at `:root`.    |
 | `requestMotionPermission`        | Triggers the iOS user-gesture permission flow.         |
 
+## Device motion (opt-in)
+
+The `motion` prop on `Glass` ties the highlight angle to the device's
+tilt. iOS Safari requires a **user-gesture permission grant** before
+tilt events fire. You MUST call `requestMotionPermission()` from a
+click or tap handler -- not from `onMount`, an effect, or module init.
+
+```svelte
+<script>
+  import { Glass, requestMotionPermission } from 'glasslikeui';
+
+  let permission = $state('pending');
+
+  async function enable() {
+    permission = await requestMotionPermission();
+    // 'granted' | 'denied' | 'unavailable'
+  }
+</script>
+
+{#if permission === 'pending'}
+  <button onclick={enable}>Enable tilt effect</button>
+{/if}
+
+<Glass motion={permission === 'granted'}>
+  {#snippet children()}...{/snippet}
+</Glass>
+```
+
+Requirements:
+
+- **User gesture** -- call inside `onclick` / `ontap` / form handler.
+  Called outside a gesture, iOS silently returns `denied` without
+  showing the prompt.
+- **HTTPS** -- `http://localhost` works for dev; plain HTTP on a real
+  device does not expose the API.
+- **Per-origin** -- granted or denied once, then remembered. A denied
+  decision can only be reset by the user in
+  Settings -> Safari -> Advanced.
+- **Non-iOS browsers** (Android Chrome, desktop Chrome / Firefox /
+  Safari) grant access implicitly; the helper returns `'granted'`
+  without any prompt on those.
+- **Unsupported browsers** (no `DeviceOrientationEvent`) -- helper
+  returns `'unavailable'` and the action is a no-op.
+
 ## Icons
 
 A small SF-symbol-inspired set ships in `ICONS`. Register your own

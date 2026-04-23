@@ -213,7 +213,7 @@ Dynamic Type scaling: set `--dynamic-type-scale` on `:root` to 1.2,
 | `scrollEdge` action               | Fades a scroll container at glass edges.      |
 | `dragSnap` action                 | Detent drag gesture (used by Sheet).          |
 | `deviceMotion` action             | Ties highlight angle to device tilt.          |
-| `requestMotionPermission`         | iOS permission gate for device motion.        |
+| `requestMotionPermission`         | iOS permission gate. Must be called from a user gesture (click / tap). HTTPS required on real devices. |
 | `syncAccessibilityPreferences`    | Bridges prefers-* media to data-* attributes. |
 
 ## Browser support

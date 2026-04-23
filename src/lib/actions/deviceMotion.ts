@@ -1,14 +1,18 @@
 /**
  * Svelte action: rotate glass highlight angle based on device tilt.
  *
- * iOS 13+ requires a user gesture to grant DeviceOrientationEvent permission.
- * The action itself cannot request permission (it attaches on mount, not on
- * user interaction). Consumers must call `requestMotionPermission()` from a
- * click/tap handler. The action listens either way -- if permission is never
- * granted, no events fire and the action is a no-op.
+ * iOS 13+ requires a user-gesture permission grant before DeviceOrientation
+ * events fire. Call `requestMotionPermission()` from a click or tap handler,
+ * NOT from onMount / an effect / module init, or iOS will silently deny.
+ * HTTPS is also required on real devices; http://localhost works for dev.
+ *
+ * Non-iOS browsers (Android Chrome, desktop Chrome/Firefox/Safari) grant
+ * access implicitly; the helper resolves to 'granted' without any prompt.
  *
  * Usage:
- *   <button onclick={requestMotionPermission}>Enable motion</button>
+ *   <button onclick={async () => (permission = await requestMotionPermission())}>
+ *     Enable motion
+ *   </button>
  *   <div use:deviceMotion>...glass surface...</div>
  */
 
