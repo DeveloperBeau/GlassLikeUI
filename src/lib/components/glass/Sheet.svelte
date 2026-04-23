@@ -1,8 +1,12 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { HStack, Spacer } from '../layout';
+	import {
+		dragSnap,
+		detentFractions,
+		type SheetDetentName
+	} from '../../actions/dragSnap';
 
-	// Browser detection without SvelteKit dependency
 	const isBrowser = typeof window !== 'undefined';
 
 	interface Props {
@@ -10,8 +14,11 @@
 		title?: string;
 		children: Snippet;
 		onClose?: () => void;
-		size?: 'small' | 'medium' | 'large' | 'fullscreen';
+		onDetentChange?: (name: SheetDetentName) => void;
+		detents?: readonly SheetDetentName[];
+		initialDetent?: SheetDetentName;
 		showHandle?: boolean;
+		draggable?: boolean;
 		class?: string;
 	}
 
@@ -20,10 +27,23 @@
 		title = '',
 		children,
 		onClose,
-		size = 'large',
+		onDetentChange,
+		detents = ['medium', 'large'],
+		initialDetent = 'medium',
 		showHandle = true,
+		draggable = true,
 		class: className = ''
 	}: Props = $props();
+
+	const fractions = $derived(detentFractions(detents));
+	const initialIndex = $derived(Math.max(0, detents.indexOf(initialDetent)));
+
+	let currentIndex = $state(0);
+	let sheetEl = $state<HTMLElement | undefined>();
+
+	$effect(() => {
+		currentIndex = initialIndex;
+	});
 
 	function close() {
 		isOpen = false;
@@ -43,6 +63,12 @@
 		if (e.target === e.currentTarget) {
 			close();
 		}
+	}
+
+	function handleSnap(index: number) {
+		currentIndex = index;
+		const name = detents[index];
+		if (name) onDetentChange?.(name);
 	}
 
 	$effect(() => {
@@ -67,9 +93,22 @@
 		onkeydown={(e) => e.key === 'Escape' && close()}
 		role="presentation"
 	>
-		<div class="sheet-container {className} size-{size}" class:open={isOpen}>
+		<div
+			bind:this={sheetEl}
+			class="sheet-container {className}"
+			class:open={isOpen}
+		>
 			{#if showHandle}
-				<div class="sheet-handle-container">
+				<div
+					class="sheet-handle-container"
+					use:dragSnap={{
+						target: sheetEl,
+						detents: fractions,
+						initial: currentIndex,
+						disabled: !draggable || fractions.length < 2,
+						onSnap: handleSnap
+					}}
+				>
 					<div class="sheet-handle"></div>
 				</div>
 			{/if}
@@ -78,7 +117,17 @@
 				<header class="sheet-header">
 					<HStack alignment="center">
 						<button class="sheet-close-btn" onclick={close} aria-label="Close">
-							<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="20"
+								height="20"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
 								<polyline points="15 18 9 12 15 6"></polyline>
 							</svg>
 							<span>Back</span>
@@ -117,10 +166,13 @@
 	}
 
 	.sheet-container {
+		--sheet-y: 100vh;
 		position: fixed;
 		left: 0;
 		right: 0;
-		bottom: 0;
+		top: 0;
+		height: 100vh;
+		margin: 0 auto;
 		background: var(--glass-sheet-bg);
 		backdrop-filter: blur(var(--glass-blur-nav)) saturate(var(--glass-saturation));
 		-webkit-backdrop-filter: blur(var(--glass-blur-nav)) saturate(var(--glass-saturation));
@@ -128,40 +180,24 @@
 		overflow: hidden;
 		display: flex;
 		flex-direction: column;
-		transform: translateY(100%);
+		transform: translateY(var(--sheet-y));
 		transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
 		z-index: 1001;
 		border-top: 1px solid var(--glass-border);
 		box-shadow:
 			0 -8px 32px -8px var(--glass-shadow),
 			inset 0 1px 0 0 var(--glass-highlight);
-	}
-
-	.sheet-container.open {
-		transform: translateY(0);
-	}
-
-	.sheet-container.size-small {
-		top: 60%;
-	}
-
-	.sheet-container.size-medium {
-		top: 40%;
-	}
-
-	.sheet-container.size-large {
-		top: 10%;
-	}
-
-	.sheet-container.size-fullscreen {
-		top: 0;
-		border-radius: 0;
+		touch-action: none;
 	}
 
 	.sheet-handle-container {
 		display: flex;
 		justify-content: center;
 		padding: 8px 0;
+		cursor: grab;
+	}
+	.sheet-handle-container:active {
+		cursor: grabbing;
 	}
 
 	.sheet-handle {
@@ -191,6 +227,7 @@
 		cursor: pointer;
 		padding: 8px 0;
 		transition: opacity var(--transition-fast);
+		font-family: var(--font-system);
 	}
 
 	.sheet-close-btn:hover {
@@ -206,6 +243,7 @@
 		font-weight: 600;
 		color: var(--color-text);
 		text-align: center;
+		font-family: var(--font-system);
 	}
 
 	.sheet-spacer {
@@ -217,20 +255,12 @@
 		overflow-y: auto;
 		overflow-x: hidden;
 		-webkit-overflow-scrolling: touch;
+		font-family: var(--font-system);
 	}
 
 	@media (min-width: 769px) {
 		.sheet-container {
-			left: 50%;
-			right: auto;
-			transform: translateX(-50%) translateY(100%);
-			width: 100%;
 			max-width: 900px;
-			border-radius: var(--glass-radius-xl) var(--glass-radius-xl) 0 0;
-		}
-
-		.sheet-container.open {
-			transform: translateX(-50%) translateY(0);
 		}
 	}
 </style>

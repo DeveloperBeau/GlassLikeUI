@@ -6,6 +6,7 @@
 		title?: string;
 		leading?: Snippet;
 		trailing?: Snippet;
+		largeTitle?: boolean;
 		transparent?: boolean;
 		scrolled?: boolean;
 		class?: string;
@@ -15,33 +16,83 @@
 		title = '',
 		leading,
 		trailing,
+		largeTitle = false,
 		transparent = false,
-		scrolled = false,
+		scrolled = $bindable(false),
 		class: className = ''
 	}: Props = $props();
+
+	let sentinelEl = $state<HTMLElement | undefined>();
+	let collapsed = $state(false);
+
+	$effect(() => {
+		if (!largeTitle || !sentinelEl || typeof IntersectionObserver === 'undefined') return;
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				for (const entry of entries) {
+					collapsed = !entry.isIntersecting;
+				}
+			},
+			{ threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+		);
+		observer.observe(sentinelEl);
+		return () => observer.disconnect();
+	});
 </script>
 
-<header class="navigation-bar {className}" class:transparent class:scrolled>
-	<nav class="nav-content">
-		<HStack spacing="sm" alignment="center" justify="between">
-			<div class="nav-leading">
-				{#if leading}
-					{@render leading()}
-				{/if}
-			</div>
+{#if largeTitle}
+	<div class="nav-large {className}" class:is-collapsed={collapsed}>
+		<header class="navigation-bar large" class:transparent class:scrolled={collapsed || scrolled}>
+			<nav class="nav-content">
+				<HStack spacing="sm" alignment="center" justify="between">
+					<div class="nav-leading">
+						{#if leading}
+							{@render leading()}
+						{/if}
+					</div>
 
-			{#if title}
-				<h1 class="nav-title">{title}</h1>
-			{/if}
+					{#if title}
+						<h1 class="nav-title-compact">{title}</h1>
+					{/if}
 
-			<div class="nav-trailing">
-				{#if trailing}
-					{@render trailing()}
+					<div class="nav-trailing">
+						{#if trailing}
+							{@render trailing()}
+						{/if}
+					</div>
+				</HStack>
+			</nav>
+		</header>
+
+		<div class="nav-large-title-block">
+			<h1 class="nav-large-title">{title}</h1>
+			<div bind:this={sentinelEl} class="nav-title-sentinel" aria-hidden="true"></div>
+		</div>
+	</div>
+{:else}
+	<header class="navigation-bar {className}" class:transparent class:scrolled>
+		<nav class="nav-content">
+			<HStack spacing="sm" alignment="center" justify="between">
+				<div class="nav-leading">
+					{#if leading}
+						{@render leading()}
+					{/if}
+				</div>
+
+				{#if title}
+					<h1 class="nav-title-compact">{title}</h1>
 				{/if}
-			</div>
-		</HStack>
-	</nav>
-</header>
+
+				<div class="nav-trailing">
+					{#if trailing}
+						{@render trailing()}
+					{/if}
+				</div>
+			</HStack>
+		</nav>
+	</header>
+{/if}
 
 <style>
 	.navigation-bar {
@@ -54,10 +105,11 @@
 		display: flex;
 		align-items: center;
 		background: var(--glass-nav-bg);
-		backdrop-filter: blur(var(--glass-nav-blur)) saturate(1.8);
-		-webkit-backdrop-filter: blur(var(--glass-nav-blur)) saturate(1.8);
+		backdrop-filter: blur(var(--glass-blur-nav)) saturate(var(--glass-saturation));
+		-webkit-backdrop-filter: blur(var(--glass-blur-nav)) saturate(var(--glass-saturation));
 		border-bottom: 1px solid var(--glass-border);
 		transition: all var(--transition);
+		font-family: var(--font-system);
 	}
 
 	.navigation-bar.transparent {
@@ -69,8 +121,8 @@
 
 	.navigation-bar.transparent.scrolled {
 		background: var(--glass-nav-bg);
-		backdrop-filter: blur(var(--glass-nav-blur)) saturate(1.8);
-		-webkit-backdrop-filter: blur(var(--glass-nav-blur)) saturate(1.8);
+		backdrop-filter: blur(var(--glass-blur-nav)) saturate(var(--glass-saturation));
+		-webkit-backdrop-filter: blur(var(--glass-blur-nav)) saturate(var(--glass-saturation));
 		border-bottom-color: var(--glass-border);
 	}
 
@@ -93,7 +145,7 @@
 		justify-content: flex-end;
 	}
 
-	.nav-title {
+	.nav-title-compact {
 		font-size: 17px;
 		font-weight: 600;
 		color: var(--color-text);
@@ -102,5 +154,42 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
+		margin: 0;
+		transition: opacity var(--transition);
+	}
+
+	.nav-large {
+		position: relative;
+	}
+
+	.navigation-bar.large .nav-title-compact {
+		opacity: 0;
+	}
+
+	.nav-large.is-collapsed .navigation-bar.large .nav-title-compact {
+		opacity: 1;
+	}
+
+	.nav-large-title-block {
+		padding: calc(56px + var(--spacing-sm)) var(--spacing-md) var(--spacing-md);
+	}
+
+	.nav-large-title {
+		font-size: clamp(1.75rem, 5vw, 2.25rem);
+		font-weight: 700;
+		color: var(--color-text);
+		letter-spacing: -0.02em;
+		margin: 0;
+		font-family: var(--font-system);
+		transition: opacity var(--transition);
+	}
+
+	.nav-large.is-collapsed .nav-large-title {
+		opacity: 0;
+	}
+
+	.nav-title-sentinel {
+		height: 1px;
+		width: 100%;
 	}
 </style>
