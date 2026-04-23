@@ -9,6 +9,14 @@ describe('library smoke test', () => {
 		expect(lib.Sheet).toBeDefined();
 		expect(lib.LensFilters).toBeDefined();
 		expect(lib.GlassDimLayer).toBeDefined();
+		expect(lib.GlassEffectContainer).toBeDefined();
+		expect(lib.GlassMorph).toBeDefined();
+	});
+
+	it('exports view transition helpers', async () => {
+		const lib = await import('../src/lib');
+		expect(lib.withGlassTransition).toBeDefined();
+		expect(lib.isViewTransitionsSupported).toBeDefined();
 	});
 
 	it('exports interactive + nav components', async () => {
