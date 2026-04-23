@@ -1,6 +1,6 @@
 {
 	"name": "glasslikeui",
-	"version": "0.2.2",
+	"version": "1.0.0",
 	"description": "Svelte component library with frosted glass materials",
 	"license": "MIT",
 	"type": "module",
