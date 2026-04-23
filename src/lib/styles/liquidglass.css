@@ -48,6 +48,20 @@
 	--glass-sheet-bg: rgba(28, 28, 30, 0.95);
 
 	/* ========================================
+	   Accent System
+	   Override --color-accent to re-theme interactive components.
+	   --color-accent-hover / --color-accent-active are auto-derived via
+	   color-mix; consumers can override them independently if desired.
+	   ======================================== */
+	--color-accent: #0071e3;
+	--color-accent-hover: color-mix(in srgb, var(--color-accent) 85%, white);
+	--color-accent-active: color-mix(in srgb, var(--color-accent) 85%, black);
+	--color-accent-10: color-mix(in srgb, var(--color-accent) 10%, transparent);
+	--color-accent-15: color-mix(in srgb, var(--color-accent) 15%, transparent);
+	--color-accent-25: color-mix(in srgb, var(--color-accent) 25%, transparent);
+	--color-accent-50: color-mix(in srgb, var(--color-accent) 50%, transparent);
+
+	/* ========================================
 	   Glass Radius System
 	   ======================================== */
 	--glass-radius-sm: 12px;

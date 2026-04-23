@@ -93,17 +93,17 @@
 	.button.variant-filled {
 		background: var(--color-accent);
 		color: white;
-		box-shadow: 0 4px 16px -4px rgba(0, 113, 227, 0.5);
+		box-shadow: 0 4px 16px -4px var(--color-accent-50);
 	}
 
 	.button.variant-filled:hover {
 		background: var(--color-accent-hover);
-		transform: translateY(-2px);
-		box-shadow: 0 8px 24px -4px rgba(0, 113, 227, 0.5);
+		box-shadow: 0 8px 28px -6px var(--color-accent-50);
 	}
 
 	.button.variant-filled:active {
-		transform: translateY(0);
+		background: var(--color-accent-active);
+		box-shadow: 0 2px 10px -4px var(--color-accent-50);
 	}
 
 	/* Glass variant */
@@ -120,7 +120,13 @@
 
 	.button.variant-glass:hover {
 		background: var(--glass-button-hover);
-		transform: translateY(-2px);
+		box-shadow:
+			inset 0 1px 0 0 var(--glass-highlight),
+			0 8px 24px -6px var(--glass-shadow);
+	}
+
+	.button.variant-glass:active {
+		background: var(--glass-active-bg);
 	}
 
 	/* Outlined variant */
@@ -131,7 +137,13 @@
 	}
 
 	.button.variant-outlined:hover {
-		background: rgba(0, 113, 227, 0.1);
+		background: var(--color-accent-10);
+		border-color: var(--color-accent-hover);
+		color: var(--color-accent-hover);
+	}
+
+	.button.variant-outlined:active {
+		background: var(--color-accent-15);
 	}
 
 	/* Plain variant */
@@ -141,33 +153,39 @@
 	}
 
 	.button.variant-plain:hover {
+		color: var(--color-accent-hover);
 		text-decoration: underline;
 	}
 
 	/* Tinted variant */
 	.button.variant-tinted {
-		background: rgba(0, 113, 227, 0.15);
+		background: var(--color-accent-15);
 		color: var(--color-accent);
 	}
 
 	.button.variant-tinted:hover {
-		background: rgba(0, 113, 227, 0.25);
+		background: var(--color-accent-25);
+		color: var(--color-accent-hover);
+	}
+
+	.button.variant-tinted:active {
+		background: var(--color-accent-10);
 	}
 
 	/* Destructive variant */
 	.button.variant-destructive {
 		background: var(--color-danger, #ef4444);
 		color: white;
-		box-shadow: 0 4px 16px -4px rgba(239, 68, 68, 0.5);
+		box-shadow: 0 4px 16px -4px color-mix(in srgb, var(--color-danger, #ef4444) 50%, transparent);
 	}
 
 	.button.variant-destructive:hover {
 		background: var(--color-danger-hover, #dc2626);
-		transform: translateY(-2px);
-		box-shadow: 0 8px 24px -4px rgba(239, 68, 68, 0.5);
+		box-shadow: 0 8px 28px -6px color-mix(in srgb, var(--color-danger, #ef4444) 50%, transparent);
 	}
 
 	.button.variant-destructive:active {
-		transform: translateY(0);
+		background: color-mix(in srgb, var(--color-danger, #ef4444) 85%, black);
+		box-shadow: 0 2px 10px -4px color-mix(in srgb, var(--color-danger, #ef4444) 50%, transparent);
 	}
 </style>
