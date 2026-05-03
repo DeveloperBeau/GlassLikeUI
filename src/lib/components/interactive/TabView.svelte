@@ -36,20 +36,39 @@
 	}
 
 	let wrapperEl = $state<HTMLDivElement | undefined>();
-	let buttonEls: Record<string, HTMLButtonElement | undefined> = $state({});
 	let indicatorLeft = $state(0);
 	let indicatorWidth = $state(0);
 	let indicatorReady = $state(false);
 
 	function measure() {
 		const wrapper = wrapperEl;
-		const btn = buttonEls[activeTab];
-		if (!wrapper || !btn) {
+		if (!wrapper) {
 			indicatorReady = false;
 			return;
 		}
-		indicatorLeft = btn.offsetLeft;
-		indicatorWidth = btn.offsetWidth;
+		const idx = tabs.findIndex((t) => t.id === activeTab);
+		if (idx < 0) {
+			indicatorReady = false;
+			return;
+		}
+		const buttons = wrapper.querySelectorAll<HTMLButtonElement>('.tab-item');
+		const btn = buttons[idx];
+		if (!btn) {
+			indicatorReady = false;
+			return;
+		}
+		const wrapperRect = wrapper.getBoundingClientRect();
+		const btnRect = btn.getBoundingClientRect();
+		if (btnRect.width === 0) {
+			// Layout not settled (font load, off-screen, HMR); retry next frame.
+			indicatorReady = false;
+			if (typeof requestAnimationFrame !== 'undefined') {
+				requestAnimationFrame(measure);
+			}
+			return;
+		}
+		indicatorLeft = btnRect.left - wrapperRect.left;
+		indicatorWidth = btnRect.width;
 		indicatorReady = true;
 	}
 
@@ -62,11 +81,23 @@
 	});
 
 	onMount(() => {
-		measure();
-		if (typeof ResizeObserver === 'undefined' || !wrapperEl) return;
+		const initialFrame =
+			typeof requestAnimationFrame !== 'undefined' ? requestAnimationFrame(measure) : 0;
+		if (typeof ResizeObserver === 'undefined' || !wrapperEl) {
+			return () => {
+				if (initialFrame && typeof cancelAnimationFrame !== 'undefined') {
+					cancelAnimationFrame(initialFrame);
+				}
+			};
+		}
 		const ro = new ResizeObserver(() => measure());
 		ro.observe(wrapperEl);
-		return () => ro.disconnect();
+		return () => {
+			if (initialFrame && typeof cancelAnimationFrame !== 'undefined') {
+				cancelAnimationFrame(initialFrame);
+			}
+			ro.disconnect();
+		};
 	});
 </script>
 
@@ -81,37 +112,40 @@
 		</div>
 	{/if}
 
-	<Glass
-		variant="regular"
-		intensity="prominent"
-		cornerRadius="full"
-		padding="xs"
-		class={inline ? 'tab-bar-container-inline' : 'tab-bar-container'}
+	<div
+		class="tab-bar-container"
+		class:inline
+		style:position={inline ? 'static' : 'fixed'}
+		style:bottom={inline ? null : 'var(--spacing-md)'}
+		style:left={inline ? null : 'var(--spacing-md)'}
+		style:right={inline ? null : 'var(--spacing-md)'}
+		style:z-index={inline ? null : '50'}
 	>
-		<div class="tab-bar-wrapper" bind:this={wrapperEl}>
-			<span
-				class="tab-indicator"
-				class:ready={indicatorReady}
-				style="transform: translateX({indicatorLeft}px); width: {indicatorWidth}px;"
-				aria-hidden="true"
-			></span>
-			<HStack spacing="xs" justify="center" class="tab-bar">
-				{#each tabs as tab}
-					<button
-						class="tab-item"
-						class:active={activeTab === tab.id}
-						onclick={() => selectTab(tab.id)}
-						bind:this={buttonEls[tab.id]}
-					>
-						{#if tab.icon}
-							<span class="tab-icon">{@render tab.icon()}</span>
-						{/if}
-						<span class="tab-label">{tab.label}</span>
-					</button>
-				{/each}
-			</HStack>
-		</div>
-	</Glass>
+		<Glass variant="regular" intensity="prominent" cornerRadius="full" padding="xs">
+			<div class="tab-bar-wrapper" bind:this={wrapperEl} style:position="relative" style:width="100%">
+				<span
+					class="tab-indicator"
+					class:ready={indicatorReady}
+					style="transform: translateX({indicatorLeft}px); width: {indicatorWidth}px;"
+					aria-hidden="true"
+				></span>
+				<HStack spacing="xs" justify="center" class="tab-bar">
+					{#each tabs as tab}
+						<button
+							class="tab-item"
+							class:active={activeTab === tab.id}
+							onclick={() => selectTab(tab.id)}
+						>
+							{#if tab.icon}
+								<span class="tab-icon">{@render tab.icon()}</span>
+							{/if}
+							<span class="tab-label">{tab.label}</span>
+						</button>
+					{/each}
+				</HStack>
+			</div>
+		</Glass>
+	</div>
 </div>
 
 <style>
@@ -130,15 +164,19 @@
 		overflow: auto;
 	}
 
-	:global(.tab-bar-container) {
+	.tab-bar-container {
 		position: fixed;
 		bottom: var(--spacing-md);
-		left: 50%;
-		transform: translateX(-50%);
+		left: var(--spacing-md);
+		right: var(--spacing-md);
 		z-index: 50;
 	}
 
-	:global(.tab-bar-container-inline) {
+	.tab-bar-container.inline {
+		position: static;
+		left: auto;
+		right: auto;
+		bottom: auto;
 		display: block;
 	}
 
@@ -150,12 +188,14 @@
 	.tab-bar-wrapper {
 		position: relative;
 		display: block;
+		width: 100%;
 	}
 
 	:global(.tab-bar) {
 		min-width: 0;
 		position: relative;
 		z-index: 1;
+		width: 100%;
 	}
 
 	.tab-indicator {
@@ -169,10 +209,9 @@
 		pointer-events: none;
 		opacity: 0;
 		z-index: 0;
-		transition:
-			transform var(--transition-spring),
-			width var(--transition-spring),
-			opacity var(--transition-fast);
+		transition-property: transform, width, opacity;
+		transition-duration: 0.4s, 0.4s, 0.15s;
+		transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1), cubic-bezier(0.32, 0.72, 0, 1), cubic-bezier(0.25, 0.1, 0.25, 1);
 	}
 
 	.tab-indicator.ready {
@@ -180,13 +219,16 @@
 	}
 
 	.tab-item {
+		flex: 1 1 0;
+		min-width: 0;
 		position: relative;
 		z-index: 1;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		justify-content: center;
 		gap: 4px;
-		padding: 10px 20px;
+		padding: 10px 4px;
 		background: transparent;
 		border: none;
 		border-radius: var(--glass-radius-full);
@@ -194,7 +236,9 @@
 		font-size: 0.75rem;
 		font-weight: 500;
 		cursor: pointer;
-		transition: color var(--transition-fast);
+		transition-property: color;
+		transition-duration: 0.15s;
+		transition-timing-function: cubic-bezier(0.25, 0.1, 0.25, 1);
 	}
 
 	.tab-item:not(.active):hover {
@@ -208,10 +252,20 @@
 	.tab-icon,
 	.tab-label {
 		display: inline-block;
-		transform-origin: center;
+		transform-origin: center center;
 		transform: scale(1);
-		transition: transform var(--transition-spring);
-		will-change: transform;
+		transition-property: transform;
+		transition-duration: 0.4s;
+		transition-timing-function: cubic-bezier(0.32, 0.72, 0, 1);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.tab-indicator,
+		.tab-item,
+		.tab-icon,
+		.tab-label {
+			transition-duration: 0s;
+		}
 	}
 
 	.tab-item.active .tab-icon {

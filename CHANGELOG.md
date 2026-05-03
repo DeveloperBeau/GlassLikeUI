@@ -1,5 +1,40 @@
 # Changelog
 
+## 1.1.1
+
+### Fixed
+
+- `TabView` floating bar now actually floats. The fixed-position class
+  was applied to the `Glass` element directly, where Glass's scoped
+  `.glass-surface { position: relative }` won specificity and forced
+  the bar back into flow. Combined with `flex-direction: column-reverse`
+  on `position-bottom`, the bar rendered at the top of the page instead
+  of the bottom. Glass is now wrapped in a positioning div that owns
+  the `position: fixed` rules.
+- `TabView` bar now respects viewport width. Container previously had
+  no explicit width and shrank to its content, so long tab labels could
+  push it past the screen edge. Container is now anchored with
+  `left: var(--spacing-md); right: var(--spacing-md)` for symmetric
+  insets, and child elements explicitly fill it.
+- `TabView` tabs are now equal-width via `flex: 1 1 0`. Previously each
+  tab sized to its label, so a "Wallets" tab and a "Cards" tab differed
+  noticeably. Horizontal item padding tightened from `12px` to `4px` so
+  longer labels fit without truncation in typical mobile widths.
+- Indicator pill measurement switched from `offsetLeft` /
+  `offsetWidth` to `getBoundingClientRect` deltas. The previous
+  approach assumed the active button's `offsetParent` was the
+  measurement wrapper, but with `.tab-bar` (HStack) carrying
+  `position: relative`, that wasn't true and the indicator was being
+  placed in the wrong coordinate system.
+- Indicator measurement now retries on the next frame if the active
+  button reports zero width (common during font load or HMR), so the
+  pill no longer freezes invisibly when the first read happens before
+  layout settles.
+- Active button refs switched from a `Record` to an indexed array.
+  Svelte 5's `bind:this` to a record key is brittle and could leave
+  the active tab's ref undefined; the indexed-array form is the
+  canonical pattern and is reliable.
+
 ## 1.1.0
 
 ### Added
