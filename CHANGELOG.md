@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.1.0
+
+### Added
+
+- `TabView` now renders a sliding indicator pill that animates between
+  the active tab's position and width using a spring transition. The
+  active tab's icon and label scale up via `transform: scale(...)` for a
+  tactile selected feel. Indicator measurement uses `offsetLeft` /
+  `offsetWidth` (layout box, not visual transform box) so it stays in
+  sync with the buttons through resize and font-load events. A
+  `ResizeObserver` re-measures on container resize. Reduced-motion is
+  honored automatically because the transitions reference
+  `--transition-spring` / `--transition-fast`, both zeroed under
+  `prefers-reduced-motion: reduce` and `data-reduced-motion='true'`.
+
 ## 1.0.0
 
 Major rewrite. Breaking changes across component names, props, and CSS
