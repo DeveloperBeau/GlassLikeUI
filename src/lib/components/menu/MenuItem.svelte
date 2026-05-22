@@ -96,7 +96,7 @@
 
 	.menu-item:focus-visible {
 		background: var(--glass-hover-subtle);
-		outline: none;
+		outline: 2px solid transparent;
 	}
 
 	.menu-item.destructive {
