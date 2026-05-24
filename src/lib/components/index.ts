@@ -23,3 +23,6 @@ export * from './typography';
 
 // Media
 export * from './media';
+
+// Menu
+export * from './menu';

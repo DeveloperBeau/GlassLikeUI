@@ -44,6 +44,12 @@ describe('library smoke test', () => {
 		expect(lib.NavigationBar).toBeDefined();
 	});
 
+	it('exports menu components', async () => {
+		const lib = await import('../src/lib');
+		expect(lib.Menu).toBeDefined();
+		expect(lib.MenuItem).toBeDefined();
+	});
+
 	it('exports design tokens', async () => {
 		const lib = await import('../src/lib');
 		expect(lib.CORNER_RADIUS).toBeDefined();

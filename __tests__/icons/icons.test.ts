@@ -142,6 +142,17 @@ describe('Icons Module', () => {
 		});
 	});
 
+	describe('weather / media icon pack', () => {
+		it.each(['cloud.sun', 'waveform'])('should have %s icon', (name) => {
+			expect(ICONS).toHaveProperty(name);
+		});
+
+		it('returns the exact registered path, not the fallback', () => {
+			expect(getIconPath('cloud.sun')).toBe(ICONS['cloud.sun']);
+			expect(getIconPath('waveform')).toBe(ICONS['waveform']);
+		});
+	});
+
 	describe('registerIcons', () => {
 		afterEach(() => {
 			delete ICONS['test.custom'];

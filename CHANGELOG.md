@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.2.0
+
+### Added
+
+- `Menu` and `MenuItem` components: an iOS-context-menu-style dropdown.
+  `Menu` renders a trigger button plus a frosted-glass popover panel with
+  `role="menu"`. It opens on click and closes on outside click, `Escape`
+  (restoring focus to the trigger), or item selection. Arrow keys, `Home`,
+  and `End` move roving focus across items. The panel scales and fades in
+  (~180ms); under `prefers-reduced-motion: reduce` it fades only. An
+  `align` prop (`'start'` or `'end'`) anchors the panel to the left or
+  right edge of the trigger. `MenuItem` renders a row with an optional
+  leading SF Symbol icon, supports `href` (anchor) or `onclick` (button),
+  and a `destructive` style.
+- Icons: `cloud.sun` and `waveform`.
+
 ## 1.1.0
 
 ### Added
