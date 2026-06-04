@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.2.1
+
+### Changed
+
+- Internal modernization to current Svelte 5 idioms; no API or visual
+  changes. `Glass`, `ScrollView`, and `Sheet` consume their device-motion,
+  scroll-edge, and drag actions via `{@attach fromAction(...)}` instead of
+  `use:`. `Menu` closes on outside click through `<svelte:document>` rather
+  than a manual effect, and derives its panel `id` from `$props.id()` for
+  stable SSR/hydration ids (replacing a module counter that could mismatch).
+  `Sheet` derives its active detent index with a writable `$derived`, and
+  `TabView`'s tab loop is now keyed by `id`.
+
 ## 1.2.0
 
 ### Added
