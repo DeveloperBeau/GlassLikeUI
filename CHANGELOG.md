@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.3.0
+
+### Changed
+
+- Relicensed from MIT to the GNU General Public License v3.0 or later
+  (`GPL-3.0-or-later`). The project is now copyleft: distributing the
+  components or any derivative work requires releasing the corresponding
+  source under a GPL-compatible license. `LICENSE`, `package.json`, and
+  `README.md` updated accordingly. Copies obtained under previous MIT
+  releases remain MIT-licensed.
+
 ## 1.2.1
 
 ### Changed

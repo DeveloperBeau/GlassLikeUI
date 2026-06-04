@@ -4,7 +4,7 @@ Svelte component library with frosted glass materials. Pseudo-element
 lensing, two-axis variant API, drag-snap sheets, View Transitions morph,
 accessibility-aware out of the box, cross-platform typography.
 
-Svelte 5 only. MIT licensed.
+Svelte 5 only. GPLv3 licensed.
 
 ## Install
 
@@ -212,4 +212,4 @@ npm run test:coverage  # with v8 coverage
 
 ## License
 
-MIT. See `LICENSE`.
+GNU General Public License v3.0 or later (GPL-3.0-or-later). Copyright (c) 2026 Beau Ayres. See `LICENSE`.
