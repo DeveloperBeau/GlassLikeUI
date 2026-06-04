@@ -9,6 +9,7 @@
 		type GlassIntensity
 	} from '../../constants/variants';
 	import { CORNER_RADIUS, PADDING, type CornerRadius, type Padding } from '../../constants';
+	import { fromAction } from 'svelte/attachments';
 	import { deviceMotion } from '../../actions/deviceMotion';
 
 	interface Props {
@@ -49,7 +50,7 @@
 		class:has-lensing={cfg.displacementScale > 0}
 		class:has-shadow={shadow}
 		class:is-interactive={interactive}
-		use:deviceMotion
+		{@attach fromAction(deviceMotion)}
 		style="
 			--glass-blur: {cfg.blur}px;
 			--glass-saturation: {cfg.saturation};

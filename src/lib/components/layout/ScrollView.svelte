@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { fromAction } from 'svelte/attachments';
 	import {
 		scrollEdge,
 		type ScrollEdgeEffect,
@@ -37,7 +38,7 @@
 	<div
 		class="scroll-view axis-{axis} {className}"
 		class:hide-indicators={!showsIndicators}
-		use:scrollEdge={{ edges, effect: edgeEffect, size: edgeSize }}
+		{@attach fromAction(scrollEdge, () => ({ edges, effect: edgeEffect, size: edgeSize }))}
 	>
 		<div class="scroll-content">
 			{@render children()}

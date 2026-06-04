@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { fromAction } from 'svelte/attachments';
 	import { HStack, Spacer } from '../layout';
 	import {
 		dragSnap,
@@ -38,12 +39,8 @@
 	const fractions = $derived(detentFractions(detents));
 	const initialIndex = $derived(Math.max(0, detents.indexOf(initialDetent)));
 
-	let currentIndex = $state(0);
+	let currentIndex = $derived(initialIndex);
 	let sheetEl = $state<HTMLElement | undefined>();
-
-	$effect(() => {
-		currentIndex = initialIndex;
-	});
 
 	function close() {
 		isOpen = false;
@@ -72,13 +69,11 @@
 	}
 
 	$effect(() => {
-		if (isBrowser && isOpen) {
+		if (isOpen) {
 			document.body.style.overflow = 'hidden';
 		}
 		return () => {
-			if (isBrowser) {
-				document.body.style.overflow = '';
-			}
+			document.body.style.overflow = '';
 		};
 	});
 </script>
@@ -101,13 +96,13 @@
 			{#if showHandle}
 				<div
 					class="sheet-handle-container"
-					use:dragSnap={{
+					{@attach fromAction(dragSnap, () => ({
 						target: sheetEl,
 						detents: fractions,
 						initial: currentIndex,
 						disabled: !draggable || fractions.length < 2,
 						onSnap: handleSnap
-					}}
+					}))}
 				>
 					<div class="sheet-handle"></div>
 				</div>

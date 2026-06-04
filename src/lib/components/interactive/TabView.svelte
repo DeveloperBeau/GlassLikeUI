@@ -96,7 +96,7 @@
 				aria-hidden="true"
 			></span>
 			<HStack spacing="xs" justify="center" class="tab-bar">
-				{#each tabs as tab}
+				{#each tabs as tab (tab.id)}
 					<button
 						class="tab-item"
 						class:active={activeTab === tab.id}

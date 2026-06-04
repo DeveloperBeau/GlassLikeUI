@@ -1,7 +1,3 @@
-<script module>
-	let counter = 0;
-</script>
-
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { tick } from 'svelte';
@@ -15,10 +11,7 @@
 
 	let { label, children, align = 'start', class: className = '' }: Props = $props();
 
-	// Note: counter resets between SSR and client hydration; aria-controls mismatch
-	// is inert because the panel is not rendered on initial load (open defaults false).
-	const panelId = `glass-menu-${++counter}`;
-	const isBrowser = typeof window !== 'undefined';
+	const panelId = $props.id();
 
 	let open = $state(false);
 	let triggerEl = $state<HTMLButtonElement>();
@@ -75,28 +68,15 @@
 		}
 	}
 
-	$effect(() => {
-		if (!open || !isBrowser) return;
-		const panel = panelEl;
-		if (!panel) return;
-
-		function onPointerDown(e: PointerEvent) {
-			const target = e.target as Node;
-			if (triggerEl?.contains(target) || panel.contains(target)) return;
-			closeMenu();
-		}
-
-		panel.addEventListener('keydown', handlePanelKeydown);
-		panel.addEventListener('click', handlePanelClick);
-		document.addEventListener('pointerdown', onPointerDown, true);
-
-		return () => {
-			panel.removeEventListener('keydown', handlePanelKeydown);
-			panel.removeEventListener('click', handlePanelClick);
-			document.removeEventListener('pointerdown', onPointerDown, true);
-		};
-	});
+	function handleDocumentPointerDown(e: PointerEvent) {
+		if (!open) return;
+		const target = e.target as Node;
+		if (triggerEl?.contains(target) || panelEl?.contains(target)) return;
+		closeMenu();
+	}
 </script>
+
+<svelte:document onpointerdown={handleDocumentPointerDown} />
 
 <div class="glass-menu">
 	<button
@@ -116,8 +96,11 @@
 			bind:this={panelEl}
 			id={panelId}
 			role="menu"
+			tabindex="-1"
 			class="glass-menu-panel"
 			class:align-end={align === 'end'}
+			onkeydown={handlePanelKeydown}
+			onclick={handlePanelClick}
 		>
 			{@render children()}
 		</div>
