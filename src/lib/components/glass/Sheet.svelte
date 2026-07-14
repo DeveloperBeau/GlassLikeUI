@@ -111,7 +111,7 @@
 			{#if title}
 				<header class="sheet-header">
 					<HStack alignment="center">
-						<button class="sheet-close-btn" onclick={close} aria-label="Close">
+						<button type="button" class="sheet-close-btn" onclick={close} aria-label="Close">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
 								width="20"

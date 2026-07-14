@@ -59,7 +59,7 @@
 		</HStack>
 	</a>
 {:else if onclick}
-	<button class="list-row {className}" class:interactive={isInteractive} class:has-divider={showDivider} {onclick}>
+	<button type="button" class="list-row {className}" class:interactive={isInteractive} class:has-divider={showDivider} {onclick}>
 		<HStack spacing="sm" alignment="center" class="row-content">
 			{#if leading}
 				<div class="row-leading">

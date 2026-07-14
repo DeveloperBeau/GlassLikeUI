@@ -8,6 +8,9 @@
 		fullWidth?: boolean;
 		disabled?: boolean;
 		href?: string | undefined;
+		/** Anchor target (href only). target="_blank" gets rel="noopener noreferrer" unless rel is set. */
+		target?: '_blank' | '_self' | '_parent' | '_top' | undefined;
+		rel?: string | undefined;
 		onclick?: ((e: MouseEvent) => void) | undefined;
 		/** Native button type. Left unset, a button inside a form submits it (browser default). */
 		type?: 'button' | 'submit' | 'reset' | undefined;
@@ -21,6 +24,8 @@
 		fullWidth = false,
 		disabled = false,
 		href,
+		target,
+		rel,
 		onclick,
 		type,
 		class: className = ''
@@ -38,6 +43,8 @@
 {#if href}
 	<a
 		{href}
+		{target}
+		rel={rel ?? (target === '_blank' ? 'noopener noreferrer' : undefined)}
 		class="button variant-{variant} size-{size} {className}"
 		class:full-width={fullWidth}
 		class:disabled

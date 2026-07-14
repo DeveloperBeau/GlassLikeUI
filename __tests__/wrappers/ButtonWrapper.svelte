@@ -8,6 +8,8 @@
 		fullWidth?: boolean;
 		disabled?: boolean;
 		href?: string;
+		target?: '_blank' | '_self' | '_parent' | '_top';
+		rel?: string;
 		onclick?: (e: MouseEvent) => void;
 		type?: 'button' | 'submit' | 'reset';
 		class?: string;
@@ -20,13 +22,15 @@
 		fullWidth = false,
 		disabled = false,
 		href,
+		target,
+		rel,
 		onclick,
 		type,
 		class: className = ''
 	}: Props = $props();
 </script>
 
-<Button {variant} {size} {fullWidth} {disabled} {href} {onclick} {type} class={className}>
+<Button {variant} {size} {fullWidth} {disabled} {href} {target} {rel} {onclick} {type} class={className}>
 	{#snippet children()}
 		{text}
 	{/snippet}

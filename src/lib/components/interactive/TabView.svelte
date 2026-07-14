@@ -98,6 +98,7 @@
 			<HStack spacing="xs" justify="center" class="tab-bar">
 				{#each tabs as tab (tab.id)}
 					<button
+						type="button"
 						class="tab-item"
 						class:active={activeTab === tab.id}
 						onclick={() => selectTab(tab.id)}

@@ -43,6 +43,32 @@ describe('Button Component', () => {
 				expect(screen.getByRole('button')).toHaveAttribute('type', type);
 			}
 		);
+
+		it('should apply target and a safe default rel for _blank links', () => {
+			render(ButtonWrapper, {
+				props: { text: 'Link', href: 'https://example.com', target: '_blank' }
+			});
+
+			const link = screen.getByRole('link');
+			expect(link).toHaveAttribute('target', '_blank');
+			expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+		});
+
+		it('should let an explicit rel override the default', () => {
+			render(ButtonWrapper, {
+				props: { text: 'Link', href: 'https://example.com', target: '_blank', rel: 'noopener' }
+			});
+
+			expect(screen.getByRole('link')).toHaveAttribute('rel', 'noopener');
+		});
+
+		it('should not set rel for same-tab links', () => {
+			render(ButtonWrapper, {
+				props: { text: 'Link', href: 'https://example.com' }
+			});
+
+			expect(screen.getByRole('link')).not.toHaveAttribute('rel');
+		});
 	});
 
 	describe('Variants', () => {
