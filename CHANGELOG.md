@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.5.0
+
+### Added
+
+- 31 new symbols, closing the most common gaps against SF Symbol names:
+  `person.2`, `person.crop.circle`, `bell`, `paperplane`, `bookmark`, `tag`,
+  `paperclip`, `flag`, `square.and.arrow.up`, `arrow.down.circle`, `mappin`,
+  `map`, `globe`, `briefcase`, `calendar`, `list.bullet`, `chart.bar`,
+  `wifi`, `bolt`, `gift`, `cart`, `terminal`, `questionmark.circle`,
+  `camera`, `photo`, `mic`, `video`, `play`, `pause`, `music.note`, and
+  `headphones`. Unknown names still fall back to `star` with a dev warning.
+
 ## 1.4.0
 
 ### Added
