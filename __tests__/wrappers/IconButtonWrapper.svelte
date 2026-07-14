@@ -7,6 +7,8 @@
 		size?: 'sm' | 'md' | 'lg';
 		label?: string;
 		onclick?: (e: MouseEvent) => void;
+		disabled?: boolean;
+		type?: 'button' | 'submit' | 'reset';
 		class?: string;
 	}
 
@@ -16,11 +18,13 @@
 		size = 'md',
 		label = 'Icon Button',
 		onclick,
+		disabled = false,
+		type,
 		class: className = ''
 	}: Props = $props();
 </script>
 
-<IconButton {variant} {size} {label} {onclick} class={className}>
+<IconButton {variant} {size} {label} {onclick} {disabled} {type} class={className}>
 	{#snippet children()}
 		<SymbolImage name={icon} />
 	{/snippet}

@@ -7,6 +7,9 @@
 		size?: 'sm' | 'md' | 'lg';
 		label?: string | undefined;
 		onclick?: ((e: MouseEvent) => void) | undefined;
+		disabled?: boolean;
+		/** Native button type. Left unset, a button inside a form submits it (browser default). */
+		type?: 'button' | 'submit' | 'reset' | undefined;
 		class?: string;
 	}
 
@@ -16,6 +19,8 @@
 		size = 'md',
 		label = '',
 		onclick,
+		disabled = false,
+		type,
 		class: className = ''
 	}: Props = $props();
 
@@ -31,6 +36,8 @@
 	aria-label={label}
 	title={label}
 	{onclick}
+	{disabled}
+	{type}
 	style="--btn-size: {sizeMap[size]}px"
 >
 	{@render children()}
@@ -53,6 +60,11 @@
 
 	.icon-button:hover {
 		color: var(--color-text);
+	}
+
+	.icon-button:disabled {
+		opacity: 0.5;
+		pointer-events: none;
 	}
 
 	.icon-button.variant-plain {

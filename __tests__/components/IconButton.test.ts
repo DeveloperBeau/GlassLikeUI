@@ -30,6 +30,26 @@ describe('IconButton Component', () => {
 			const svg = container.querySelector('svg');
 			expect(svg).toBeInTheDocument();
 		});
+
+		it('should not be disabled and have no type attribute by default', () => {
+			render(IconButtonWrapper, { props: { icon: 'star' } });
+
+			const button = screen.getByRole('button');
+			expect(button).not.toBeDisabled();
+			expect(button).not.toHaveAttribute('type');
+		});
+
+		it('should apply disabled when set', () => {
+			render(IconButtonWrapper, { props: { icon: 'star', disabled: true } });
+
+			expect(screen.getByRole('button')).toBeDisabled();
+		});
+
+		it('should apply type when provided', () => {
+			render(IconButtonWrapper, { props: { icon: 'star', type: 'button' } });
+
+			expect(screen.getByRole('button')).toHaveAttribute('type', 'button');
+		});
 	});
 
 	describe('Variants', () => {

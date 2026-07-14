@@ -1,13 +1,23 @@
 # Changelog
 
-## 1.3.1
+## 1.4.0
 
 ### Added
 
-- `Button` now accepts a native `type` prop (`'button' | 'submit' | 'reset'`).
-  Unset, it keeps the browser default (a button inside a form submits it), so
-  existing usage is unchanged; set `type="button"` for form buttons that must
-  not submit, or `type="submit"` to be explicit.
+- `Button` and `IconButton` accept a native `type` prop
+  (`'button' | 'submit' | 'reset'`). Unset keeps the browser default (a button
+  inside a form submits it), so existing usage is unchanged; set
+  `type="button"` for form buttons that must not submit, or `type="submit"`
+  to be explicit.
+- `IconButton` accepts `disabled`.
+- `Button` links accept `target` and `rel`; `target="_blank"` defaults to
+  `rel="noopener noreferrer"` unless `rel` is given.
+
+### Fixed
+
+- Internal control buttons (tab items in `TabView`, interactive `ListRow`,
+  the `Sheet` close button) are now explicitly `type="button"`, so they no
+  longer submit a surrounding form.
 
 ## 1.3.0
 
