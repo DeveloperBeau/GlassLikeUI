@@ -9,6 +9,8 @@
 		disabled?: boolean;
 		href?: string | undefined;
 		onclick?: ((e: MouseEvent) => void) | undefined;
+		/** Native button type. Left unset, a button inside a form submits it (browser default). */
+		type?: 'button' | 'submit' | 'reset' | undefined;
 		class?: string;
 	}
 
@@ -20,6 +22,7 @@
 		disabled = false,
 		href,
 		onclick,
+		type,
 		class: className = ''
 	}: Props = $props();
 
@@ -52,6 +55,7 @@
 		class:full-width={fullWidth}
 		{disabled}
 		{onclick}
+		{type}
 		style="
 			--btn-padding: {styles.padding};
 			--btn-font-size: {styles.fontSize};

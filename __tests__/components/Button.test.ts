@@ -28,6 +28,21 @@ describe('Button Component', () => {
 			expect(link.tagName).toBe('A');
 			expect(link).toHaveAttribute('href', 'https://example.com');
 		});
+
+		it('should not set a type attribute by default', () => {
+			render(ButtonWrapper, { props: { text: 'Click me' } });
+
+			expect(screen.getByRole('button')).not.toHaveAttribute('type');
+		});
+
+		it.each(['button', 'submit', 'reset'] as const)(
+			'should apply type="%s" when provided',
+			(type) => {
+				render(ButtonWrapper, { props: { text: 'Click me', type } });
+
+				expect(screen.getByRole('button')).toHaveAttribute('type', type);
+			}
+		);
 	});
 
 	describe('Variants', () => {
