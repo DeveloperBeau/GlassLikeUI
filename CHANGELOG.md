@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.3.1
+
+### Added
+
+- `Button` now accepts a native `type` prop (`'button' | 'submit' | 'reset'`).
+  Unset, it keeps the browser default (a button inside a form submits it), so
+  existing usage is unchanged; set `type="button"` for form buttons that must
+  not submit, or `type="submit"` to be explicit.
+
 ## 1.3.0
 
 ### Changed
