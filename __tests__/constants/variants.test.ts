@@ -1,11 +1,17 @@
 import { describe, it, expect } from 'vitest';
+import fc from 'fast-check';
 import {
 	INTENSITY_CONFIG,
 	VARIANT_CONFIG,
 	DEFAULT_VARIANT,
 	DEFAULT_INTENSITY,
+	BUTTON_GLASS_STYLE,
+	isGlassButtonVariant,
+	glassButtonVars,
 	type GlassIntensity,
-	type GlassVariant
+	type GlassVariant,
+	type ButtonVariant,
+	type GlassButtonVariant
 } from '../../src/lib/constants/variants';
 
 describe('variants', () => {
@@ -158,6 +164,214 @@ describe('variants', () => {
 
 		it('default intensity exists in INTENSITY_CONFIG', () => {
 			expect(INTENSITY_CONFIG[DEFAULT_INTENSITY]).toBeDefined();
+		});
+	});
+
+	describe('BUTTON_GLASS_STYLE', () => {
+		it('exposes exactly the two SwiftUI glass button styles', () => {
+			expect(Object.keys(BUTTON_GLASS_STYLE)).toEqual(['glass', 'glassProminent']);
+		});
+
+		// Literal expectations, not lookups into the object under test: asserting
+		// BUTTON_GLASS_STYLE.glass.intensity === BUTTON_GLASS_STYLE.glass.intensity
+		// would hold for any value.
+		it('maps .glass to a subtle regular surface with no tint', () => {
+			expect(BUTTON_GLASS_STYLE.glass).toEqual({
+				variant: 'regular',
+				intensity: 'subtle',
+				tinted: false
+			});
+		});
+
+		it('maps .glassProminent to a standard regular surface with an accent tint', () => {
+			expect(BUTTON_GLASS_STYLE.glassProminent).toEqual({
+				variant: 'regular',
+				intensity: 'standard',
+				tinted: true
+			});
+		});
+
+		it('references only intensities that exist in INTENSITY_CONFIG', () => {
+			for (const style of Object.values(BUTTON_GLASS_STYLE)) {
+				expect(INTENSITY_CONFIG[style.intensity]).toBeDefined();
+			}
+		});
+
+		it('references only variants that exist in VARIANT_CONFIG', () => {
+			for (const style of Object.values(BUTTON_GLASS_STYLE)) {
+				expect(VARIANT_CONFIG[style.variant]).toBeDefined();
+			}
+		});
+	});
+
+	describe('isGlassButtonVariant', () => {
+		it.each(['glass', 'glassProminent'] as const)('accepts %s', (v) => {
+			expect(isGlassButtonVariant(v)).toBe(true);
+		});
+
+		it.each(['filled', 'outlined', 'plain', 'tinted', 'destructive'] as const)(
+			'rejects the non-glass variant %s',
+			(v) => {
+				expect(isGlassButtonVariant(v)).toBe(false);
+			}
+		);
+
+		it('rejects the empty string', () => {
+			expect(isGlassButtonVariant('')).toBe(false);
+		});
+
+		// 'tinted' is a real button variant and BUTTON_GLASS_STYLE.glassProminent
+		// carries a `tinted` flag; a prototype-walking or substring implementation
+		// would confuse the two.
+		it('rejects near-miss names', () => {
+			for (const v of ['Glass', 'glassprominent', 'glass ', ' glass', 'glassProminentX']) {
+				expect(isGlassButtonVariant(v)).toBe(false);
+			}
+		});
+
+		it('rejects inherited Object properties', () => {
+			for (const v of ['toString', 'constructor', '__proto__', 'hasOwnProperty']) {
+				expect(isGlassButtonVariant(v)).toBe(false);
+			}
+		});
+
+		describe('fuzz', () => {
+			// FALSE POSITIVE validation: no arbitrary string may be mistaken for a
+			// glass variant, which would render a backdrop layer for a solid button.
+			it('accepts nothing outside the two known names', () => {
+				fc.assert(
+					fc.property(fc.string(), (s) => {
+						const known = s === 'glass' || s === 'glassProminent';
+						expect(isGlassButtonVariant(s)).toBe(known);
+					}),
+					{ numRuns: 1000 }
+				);
+			});
+
+			// FALSE NEGATIVE validation: the predicate must agree with the table it
+			// guards, in both directions, for every declared button variant.
+			it('agrees with BUTTON_GLASS_STYLE membership for every ButtonVariant', () => {
+				const all: ButtonVariant[] = [
+					'filled',
+					'outlined',
+					'plain',
+					'tinted',
+					'destructive',
+					'glass',
+					'glassProminent'
+				];
+				fc.assert(
+					fc.property(fc.constantFrom(...all), (v) => {
+						expect(isGlassButtonVariant(v)).toBe(
+							Object.prototype.hasOwnProperty.call(BUTTON_GLASS_STYLE, v)
+						);
+					}),
+					{ numRuns: 200 }
+				);
+			});
+		});
+	});
+
+	describe('glassButtonVars', () => {
+		it('resolves .glass to the subtle blur/saturation and regular opacity', () => {
+			expect(glassButtonVars('glass')).toEqual({
+				blur: 10,
+				saturation: 1.4,
+				opacity: 0.3,
+				tinted: false
+			});
+		});
+
+		it('resolves .glassProminent to the standard blur/saturation and regular opacity', () => {
+			expect(glassButtonVars('glassProminent')).toEqual({
+				blur: 20,
+				saturation: 1.8,
+				opacity: 0.3,
+				tinted: true
+			});
+		});
+
+		// The whole reason this function exists rather than hardcoded CSS: the
+		// numbers must stay wired to the shared tokens, not copied beside them.
+		it('reads its numbers from INTENSITY_CONFIG rather than a private copy', () => {
+			for (const name of ['glass', 'glassProminent'] as const) {
+				const cfg = INTENSITY_CONFIG[BUTTON_GLASS_STYLE[name].intensity];
+				const vars = glassButtonVars(name);
+				expect(vars?.blur).toBe(cfg.blur);
+				expect(vars?.saturation).toBe(cfg.saturation);
+			}
+		});
+
+		it('reads its opacity from VARIANT_CONFIG rather than a private copy', () => {
+			for (const name of ['glass', 'glassProminent'] as const) {
+				const cfg = VARIANT_CONFIG[BUTTON_GLASS_STYLE[name].variant];
+				expect(glassButtonVars(name)?.opacity).toBe(cfg.opacityDark);
+			}
+		});
+
+		it('gives the prominent style a stronger blur than the plain one', () => {
+			const plain = glassButtonVars('glass');
+			const prominent = glassButtonVars('glassProminent');
+			expect(prominent!.blur).toBeGreaterThan(plain!.blur);
+		});
+
+		it.each(['filled', 'outlined', 'plain', 'tinted', 'destructive'] as const)(
+			'returns null for the non-glass variant %s',
+			(v) => {
+				expect(glassButtonVars(v)).toBeNull();
+			}
+		);
+
+		it('returns null rather than throwing for an unknown variant', () => {
+			expect(() => glassButtonVars('nope' as ButtonVariant)).not.toThrow();
+			expect(glassButtonVars('nope' as ButtonVariant)).toBeNull();
+		});
+
+		describe('fuzz', () => {
+			const glassNames = fc.constantFrom<GlassButtonVariant>('glass', 'glassProminent');
+
+			// FALSE NEGATIVE validation: a glass variant must always produce a
+			// usable, renderable surface -- never null, NaN or a negative length.
+			it('always produces finite, renderable values for glass variants', () => {
+				fc.assert(
+					fc.property(glassNames, (name) => {
+						const vars = glassButtonVars(name);
+						expect(vars).not.toBeNull();
+						expect(Number.isFinite(vars!.blur)).toBe(true);
+						expect(vars!.blur).toBeGreaterThan(0);
+						expect(Number.isFinite(vars!.saturation)).toBe(true);
+						expect(vars!.saturation).toBeGreaterThanOrEqual(1);
+						expect(vars!.opacity).toBeGreaterThan(0);
+						expect(vars!.opacity).toBeLessThanOrEqual(1);
+						expect(typeof vars!.tinted).toBe('boolean');
+					}),
+					{ numRuns: 500 }
+				);
+			});
+
+			// FALSE POSITIVE validation: nothing else may yield a glass surface.
+			it('returns null for every string that is not a glass variant', () => {
+				fc.assert(
+					fc.property(
+						fc.string().filter((s) => s !== 'glass' && s !== 'glassProminent'),
+						(s) => {
+							expect(glassButtonVars(s as ButtonVariant)).toBeNull();
+						}
+					),
+					{ numRuns: 1000 }
+				);
+			});
+
+			// Consistency across the seam: the predicate and the resolver must never
+			// disagree, or Button would add a glass class with no glass variables.
+			it('is non-null exactly when isGlassButtonVariant is true', () => {
+				fc.assert(
+					fc.property(fc.string(), (s) => {
+						expect(glassButtonVars(s as ButtonVariant) !== null).toBe(isGlassButtonVariant(s));
+					}),
+					{ numRuns: 1000 }
+				);
+			});
 		});
 	});
 });

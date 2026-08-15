@@ -34,6 +34,78 @@ describe('Glass', () => {
 		});
 	});
 
+	describe('Shape', () => {
+		it('defaults to the rect shape, keeping the corner-radius token', () => {
+			const { container } = render(GlassWrapper, {
+				props: { content: 'x', cornerRadius: 'md' }
+			});
+			const style = (container.querySelector('.glass-surface') as HTMLElement).getAttribute(
+				'style'
+			);
+			expect(style).toContain('--glass-radius: var(--glass-radius-md)');
+		});
+
+		it('renders a capsule with the full radius token', () => {
+			const { container } = render(GlassWrapper, {
+				props: { content: 'x', shape: 'capsule', cornerRadius: 'sm' }
+			});
+			const style = (container.querySelector('.glass-surface') as HTMLElement).getAttribute(
+				'style'
+			);
+			expect(style).toContain('--glass-radius: var(--glass-radius-full)');
+		});
+
+		it('renders a circle at 50% radius', () => {
+			const { container } = render(GlassWrapper, {
+				props: { content: 'x', shape: 'circle' }
+			});
+			const style = (container.querySelector('.glass-surface') as HTMLElement).getAttribute(
+				'style'
+			);
+			expect(style).toContain('--glass-radius: 50%');
+		});
+
+		it('locks a circle to a square box', () => {
+			const { container } = render(GlassWrapper, {
+				props: { content: 'x', shape: 'circle' }
+			});
+			const style = (container.querySelector('.glass-surface') as HTMLElement).getAttribute(
+				'style'
+			);
+			expect(style).toContain('aspect-ratio: 1 / 1');
+		});
+
+		it.each(['rect', 'capsule'] as const)('leaves %s unconstrained', (shape) => {
+			const { container } = render(GlassWrapper, { props: { content: 'x', shape } });
+			const style = (container.querySelector('.glass-surface') as HTMLElement).getAttribute(
+				'style'
+			);
+			expect(style).not.toContain('aspect-ratio');
+		});
+
+		it('tags the surface with its shape for styling hooks', () => {
+			const { container } = render(GlassWrapper, {
+				props: { content: 'x', shape: 'capsule' }
+			});
+			expect(container.querySelector('.glass-surface')).toHaveAttribute(
+				'data-glass-shape',
+				'capsule'
+			);
+		});
+
+		// The motion branch is a second copy of the markup; a shape must reach it.
+		it('applies the shape in the motion branch too', () => {
+			const { container } = render(GlassWrapper, {
+				props: { content: 'x', shape: 'circle', motion: true }
+			});
+			const style = (container.querySelector('.glass-surface') as HTMLElement).getAttribute(
+				'style'
+			);
+			expect(style).toContain('--glass-radius: 50%');
+			expect(style).toContain('aspect-ratio: 1 / 1');
+		});
+	});
+
 	describe('Intensity', () => {
 		const intensities = ['subtle', 'standard', 'prominent'] as const;
 

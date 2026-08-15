@@ -8,7 +8,12 @@
 		type GlassVariant,
 		type GlassIntensity
 	} from '../../constants/variants';
-	import { CORNER_RADIUS, PADDING, type CornerRadius, type Padding } from '../../constants';
+	import { PADDING, type CornerRadius, type Padding } from '../../constants';
+	import {
+		glassShapeStyle,
+		DEFAULT_GLASS_SHAPE,
+		type GlassShape
+	} from '../../constants/shapes';
 	import { fromAction } from 'svelte/attachments';
 	import { deviceMotion } from '../../actions/deviceMotion';
 
@@ -18,6 +23,8 @@
 		intensity?: GlassIntensity;
 		tint?: string;
 		cornerRadius?: CornerRadius;
+		/** Overrides cornerRadius entirely. Mirrors SwiftUI's glassEffect(in:). */
+		shape?: GlassShape;
 		padding?: Padding;
 		shadow?: boolean;
 		interactive?: boolean;
@@ -32,6 +39,7 @@
 		intensity = DEFAULT_INTENSITY,
 		tint = '',
 		cornerRadius = 'lg',
+		shape = DEFAULT_GLASS_SHAPE,
 		padding = 'md',
 		shadow = true,
 		interactive = false,
@@ -40,23 +48,28 @@
 		style: customStyle = ''
 	}: Props = $props();
 
-	const cfg = $derived(INTENSITY_CONFIG[intensity]);
-	const vcfg = $derived(VARIANT_CONFIG[variant]);
+	// Fall back to the documented defaults: an unrecognised variant or intensity
+	// would otherwise read a property of undefined and crash the render.
+	const cfg = $derived(INTENSITY_CONFIG[intensity] ?? INTENSITY_CONFIG[DEFAULT_INTENSITY]);
+	const vcfg = $derived(VARIANT_CONFIG[variant] ?? VARIANT_CONFIG[DEFAULT_VARIANT]);
+	const shapeStyle = $derived(glassShapeStyle(shape, cornerRadius));
 </script>
 
 {#if motion}
 	<div
 		class="glass-surface {variant} {className}"
+		data-glass-shape={shape}
 		class:has-lensing={cfg.displacementScale > 0}
 		class:has-shadow={shadow}
 		class:is-interactive={interactive}
-		{@attach fromAction(deviceMotion)}
+		{@attach fromAction(deviceMotion, () => ({}))}
 		style="
 			--glass-blur: {cfg.blur}px;
 			--glass-saturation: {cfg.saturation};
 			--glass-displacement-scale: {cfg.displacementScale};
 			--glass-opacity: {vcfg.opacityDark};
-			--glass-radius: {CORNER_RADIUS[cornerRadius]};
+			--glass-radius: {shapeStyle.radius};
+			{shapeStyle.aspectRatio ? `aspect-ratio: ${shapeStyle.aspectRatio};` : ''}
 			{tint ? `--glass-surface-bg: ${tint};` : ''}
 			padding: {PADDING[padding]};
 			{customStyle}
@@ -69,6 +82,7 @@
 {:else}
 	<div
 		class="glass-surface {variant} {className}"
+		data-glass-shape={shape}
 		class:has-lensing={cfg.displacementScale > 0}
 		class:has-shadow={shadow}
 		class:is-interactive={interactive}
@@ -77,7 +91,8 @@
 			--glass-saturation: {cfg.saturation};
 			--glass-displacement-scale: {cfg.displacementScale};
 			--glass-opacity: {vcfg.opacityDark};
-			--glass-radius: {CORNER_RADIUS[cornerRadius]};
+			--glass-radius: {shapeStyle.radius};
+			{shapeStyle.aspectRatio ? `aspect-ratio: ${shapeStyle.aspectRatio};` : ''}
 			{tint ? `--glass-surface-bg: ${tint};` : ''}
 			padding: {PADDING[padding]};
 			{customStyle}
@@ -134,6 +149,13 @@
 			rgba(0, 0, 0, calc(0.04 * var(--glass-motion-enabled))) 100%
 		);
 		mix-blend-mode: overlay;
+	}
+
+	/* A circular surface centres its content; a square box would not. */
+	.glass-surface[data-glass-shape='circle'] .glass-content {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.glass-content {

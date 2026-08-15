@@ -83,12 +83,60 @@ attributes on non-Safari browsers:
 | `NavigationBar`          | Top chrome; supports `largeTitle` collapse.      |
 | `NavigationLink`         | Pill-style link.                                 |
 | `TabView`                | Floating tab bar.                                |
-| `Button` / `IconButton`  | `filled` / `outlined` / `plain` / `tinted` / `destructive`. |
+| `Button` / `IconButton`  | `filled` / `outlined` / `plain` / `tinted` / `destructive` / `glass` / `glassProminent`. |
+| `Toggle`                 | iOS-style switch over a native checkbox.         |
 | `Badge`                  | `default` / `accent`.                            |
 | `Text`                   | Dynamic-Type-aware text.                         |
-| `List` / `ListRow`       | Grouped list with insets.                        |
+| `Label`                  | Icon + title pair with SwiftUI label styles.     |
+| `List` / `ListRow`       | Grouped list with insets and swipe actions.      |
 | `HStack` / `VStack` / `ZStack` / `Grid` / `Spacer` / `Divider` / `ScrollView` | Layout primitives. |
 | `SymbolImage`            | SVG icon renderer.                               |
+
+## Glass shape
+
+`Glass` takes a `shape` prop mirroring SwiftUI's
+`glassEffect(_:in:)`. It overrides `cornerRadius` entirely.
+
+```svelte
+<Glass shape="capsule">...</Glass>
+<Glass shape="circle">...</Glass>
+```
+
+- `rect` (default) -- uses the `cornerRadius` token.
+- `capsule` -- fully rounded ends.
+- `circle` -- 50% radius, locked to a 1:1 box.
+
+Buttons get the same treatment through the `glass` and
+`glassProminent` variants, which read their blur and saturation from
+the shared intensity tokens rather than duplicating them.
+
+## Swipe actions and pull to refresh
+
+`ListRow` accepts a `swipeActions` snippet, mirroring SwiftUI's
+`.swipeActions(edge:allowsFullSwipe:)`:
+
+```svelte
+<ListRow allowsFullSwipe onFullSwipe={() => remove(item)}>
+  {#snippet children()}{item.title}{/snippet}
+  {#snippet swipeActions()}
+    <button onclick={() => remove(item)}>Delete</button>
+  {/snippet}
+</ListRow>
+```
+
+`ScrollView` accepts an `onRefresh` handler, mirroring
+`.refreshable`. The indicator stays up until the returned promise
+settles -- including when it rejects:
+
+```svelte
+<ScrollView onRefresh={async () => await reload()}>
+  ...
+</ScrollView>
+```
+
+Both are also available as standalone actions for your own markup.
+They drive `--swipe-x` / `--refresh-pull` and `data-swipe-state` /
+`data-refresh-phase`; style off those.
 
 ## Actions
 
@@ -96,6 +144,8 @@ attributes on non-Safari browsers:
 | -------------------------------- | ------------------------------------------------------ |
 | `scrollEdge`                     | Fade a scroll container at edges meeting glass chrome. |
 | `dragSnap`                       | Detent-based drag gesture (used by `Sheet`).           |
+| `swipeActions`                   | Swipe a row aside to reveal actions.                   |
+| `refreshable`                    | Pull-to-refresh gesture.                               |
 | `deviceMotion`                   | Ties the glass highlight angle to device tilt.         |
 | `withGlassTransition`            | Wraps a DOM update in a view transition.               |
 | `syncAccessibilityPreferences`   | Bridges `prefers-*` media to data-attrs at `:root`.    |
