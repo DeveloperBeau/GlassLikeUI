@@ -12,11 +12,11 @@
 	},
 	"coverageAnalysis": "perTest",
 	"mutate": ["src/lib/actions/*.ts", "src/lib/constants/*.ts", "src/lib/icons/index.ts"],
-	"_comment_thresholds": "break sits just under the achieved score. a11ySync, deviceMotion, viewTransition and constants are at 100%; dragSnap's remaining survivors are equivalent mutants (layered guards that cover each other, and boundaries where both branches compute the same value). swipeActions is newer and at ~78%, which is what holds the total down - raise break to 95 once it catches up.",
+	"_comment_thresholds": "break sits just under the achieved score, as a ratchet. a11ySync, deviceMotion, viewTransition and constants are at 100%. The remaining survivors are largely equivalent mutants: layered guards that cover each other (samples.length < 2 vs !first || !last), and boundaries where both branches compute the same value (fraction >= maxDetent adds zero).",
 	"thresholds": {
-		"high": 95,
-		"low": 85,
-		"break": 90
+		"high": 97,
+		"low": 90,
+		"break": 94
 	},
 	"timeoutMS": 60000,
 	"concurrency": 4

@@ -21,15 +21,13 @@ export default defineConfig({
 			include: ['src/lib/**/*.{ts,svelte}'],
 			exclude: ['src/lib/**/index.ts', 'src/lib/**/*.d.ts', 'src/lib/test-setup.ts'],
 			// Ratchet: set just below the current numbers so coverage cannot
-			// silently regress. Raise as gaps close.
-			// Ratchet: set just below the current numbers so coverage cannot
 			// silently regress. The branch figure trails the rest because Svelte
 			// compiles every `{value}` interpolation to `${value ?? ''}`, and a
 			// prop with a default can only reach the nullish side when a caller
 			// passes null explicitly (see nullProps.test.ts).
 			thresholds: {
 				statements: 97,
-				branches: 84,
+				branches: 87,
 				functions: 96,
 				lines: 98
 			}
