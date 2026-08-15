@@ -66,7 +66,7 @@ describe('Menu Component', () => {
 		it('closes when a menu item is selected', async () => {
 			render(MenuWrapper);
 			await openTrigger();
-			await fireEvent.click(screen.getAllByRole('menuitem')[0]);
+			await fireEvent.click(screen.getAllByRole('menuitem')[0]!);
 			expect(screen.queryByRole('menu')).not.toBeInTheDocument();
 		});
 	});

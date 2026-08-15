@@ -23,6 +23,10 @@ build/
 coverage/
 .nyc_output/
 
+# Mutation testing
+reports/
+.stryker-tmp/
+
 # Editor
 .vscode/
 !.vscode/settings.json
@@ -52,3 +56,6 @@ CLAUDE.local.md
 .claire/
 skills-lock.json
 .agents/
+
+# Agent tooling
+.evolver/

@@ -54,10 +54,9 @@ export function deviceMotion(node: HTMLElement, initialOptions: DeviceMotionOpti
 	let options = { ...initialOptions };
 
 	if (!isDeviceMotionSupported()) {
+		// Nothing listens, so there is no state worth tracking here.
 		return {
-			update(newOptions: DeviceMotionOptions) {
-				options = { ...newOptions };
-			},
+			update() {},
 			destroy() {}
 		};
 	}

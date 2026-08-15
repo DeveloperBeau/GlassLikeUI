@@ -16,7 +16,7 @@
 
 export interface DragSnapOptions {
 	/** Element whose transform is manipulated. If omitted, uses the node itself. */
-	target?: HTMLElement | null;
+	target?: HTMLElement | null | undefined;
 	/** Detent positions as viewport-height fractions (0..1). Higher = taller sheet. */
 	detents: number[];
 	/** Initial detent index. */
@@ -35,7 +35,7 @@ export interface DragSnapOptions {
 	disabled?: boolean;
 }
 
-interface PointerSample {
+export interface PointerSample {
 	y: number;
 	t: number;
 }
@@ -52,9 +52,9 @@ export function dragSnap(node: HTMLElement, initialOptions: DragSnapOptions) {
 
 	const target = () => options.target ?? node;
 
-	function applyFraction(fraction: number, animate = false) {
+	function applyFraction(fraction: number, animate: boolean) {
+		// target() falls back to `node`, so there is always an element.
 		const el = target();
-		if (!el) return;
 		el.style.transition = animate
 			? 'transform 0.4s cubic-bezier(0.32, 0.72, 0, 1)'
 			: 'none';
@@ -91,23 +91,15 @@ export function dragSnap(node: HTMLElement, initialOptions: DragSnapOptions) {
 		const deltaY = event.clientY - startY;
 		const fractionDelta = -deltaY / viewportH;
 
-		let newFraction = startFraction + fractionDelta;
-
-		const maxDetent = Math.max(...options.detents);
-		const minDetent = Math.min(...options.detents);
-		const rubber = options.rubberBand ?? 0.3;
-
-		if (newFraction > maxDetent) {
-			const excess = newFraction - maxDetent;
-			newFraction = maxDetent + excess * rubber;
-		} else if (newFraction < minDetent) {
-			const deficit = minDetent - newFraction;
-			newFraction = minDetent - deficit * rubber;
-		}
+		const newFraction = applyRubberBand(
+			startFraction + fractionDelta,
+			Math.min(...options.detents),
+			Math.max(...options.detents),
+			options.rubberBand ?? 0.3
+		);
 
 		applyFraction(newFraction, false);
-		samples.push({ y: event.clientY, t: performance.now() });
-		if (samples.length > 5) samples.shift();
+		samples = pushSample(samples, { y: event.clientY, t: performance.now() });
 		options.onDrag?.(deltaY, newFraction);
 	}
 
@@ -116,25 +108,16 @@ export function dragSnap(node: HTMLElement, initialOptions: DragSnapOptions) {
 		dragging = false;
 		pointerId = null;
 
-		const velocity = computeVelocity(samples);
-		const threshold = options.velocityThreshold ?? 500;
+		const viewportH = window.innerHeight || 1;
+		const finalFraction = startFraction + -(event.clientY - startY) / viewportH;
 
-		let nextIndex = currentIndex;
-		if (Math.abs(velocity) > threshold) {
-			if (velocity < 0) {
-				nextIndex = Math.min(currentIndex + 1, options.detents.length - 1);
-			} else {
-				nextIndex = Math.max(currentIndex - 1, 0);
-			}
-		} else {
-			const viewportH = window.innerHeight || 1;
-			const deltaY = event.clientY - startY;
-			const fractionDelta = -deltaY / viewportH;
-			const finalFraction = startFraction + fractionDelta;
-			nextIndex = nearestDetentIndex(finalFraction, options.detents);
-		}
-
-		currentIndex = nextIndex;
+		currentIndex = chooseNextIndex(
+			currentIndex,
+			computeVelocity(samples),
+			options.velocityThreshold ?? 500,
+			finalFraction,
+			options.detents
+		);
 		const snappedFraction = detentAt(options.detents, currentIndex);
 		applyFraction(snappedFraction, true);
 		options.onSnap?.(currentIndex, snappedFraction);
@@ -161,13 +144,11 @@ export function dragSnap(node: HTMLElement, initialOptions: DragSnapOptions) {
 	// Start at closed (100vh offset) then animate into the initial detent
 	// on the next frame so the sheet's entry reads as a spring.
 	const el = target();
-	if (el) {
-		el.style.transition = 'none';
-		el.style.setProperty('--sheet-y', '100vh');
-		const raf =
-			typeof requestAnimationFrame === 'function' ? requestAnimationFrame : (cb: () => void) => cb();
-		raf(() => applyFraction(detentAt(options.detents, currentIndex), true));
-	}
+	el.style.transition = 'none';
+	el.style.setProperty('--sheet-y', '100vh');
+	const raf =
+		typeof requestAnimationFrame === 'function' ? requestAnimationFrame : (cb: () => void) => cb();
+	raf(() => applyFraction(detentAt(options.detents, currentIndex), true));
 
 	return {
 		update(newOptions: DragSnapOptions) {
@@ -184,16 +165,54 @@ export function dragSnap(node: HTMLElement, initialOptions: DragSnapOptions) {
 	};
 }
 
-function clampIndex(i: number, len: number): number {
-	if (len === 0) return 0;
+/** Clamp a detent index into range; 0 when there are no detents. */
+export function clampIndex(i: number, len: number): number {
+	// An empty list yields 0: Math.min(i, -1) then Math.max(0, ...) collapses there.
 	return Math.max(0, Math.min(i, len - 1));
 }
 
-function detentAt(detents: number[], index: number): number {
+/** The fraction at an index, falling back to the first detent then 0. */
+export function detentAt(detents: number[], index: number): number {
 	return detents[index] ?? detents[0] ?? 0;
 }
 
-function nearestDetentIndex(fraction: number, detents: number[]): number {
+/**
+ * Rubber-band a fraction dragged beyond the detent range, so overshoot moves
+ * at a reduced rate instead of tracking the pointer one-to-one.
+ */
+export function applyRubberBand(
+	fraction: number,
+	minDetent: number,
+	maxDetent: number,
+	rubber: number
+): number {
+	if (fraction > maxDetent) return maxDetent + (fraction - maxDetent) * rubber;
+	if (fraction < minDetent) return minDetent - (minDetent - fraction) * rubber;
+	return fraction;
+}
+
+/**
+ * Pick the detent to settle on: a flick faster than the threshold moves one
+ * step in its direction, otherwise snap to whichever detent is nearest.
+ */
+export function chooseNextIndex(
+	currentIndex: number,
+	velocity: number,
+	threshold: number,
+	finalFraction: number,
+	detents: number[]
+): number {
+	if (Math.abs(velocity) > threshold) {
+		// Clamp the step: a currentIndex outside the list would otherwise step to
+		// an unindexable position (e.g. -1) rather than a real detent.
+		const stepped = velocity < 0 ? currentIndex + 1 : currentIndex - 1;
+		return clampIndex(stepped, detents.length);
+	}
+	return nearestDetentIndex(finalFraction, detents);
+}
+
+/** Index of the detent closest to `fraction`; ties resolve to the lower index. */
+export function nearestDetentIndex(fraction: number, detents: number[]): number {
 	let bestIndex = 0;
 	let bestDistance = Infinity;
 	for (let i = 0; i < detents.length; i++) {
@@ -208,14 +227,35 @@ function nearestDetentIndex(fraction: number, detents: number[]): number {
 	return bestIndex;
 }
 
-function computeVelocity(samples: PointerSample[]): number {
+/** How many pointer samples the velocity window keeps. */
+export const SAMPLE_WINDOW = 5;
+
+/**
+ * Append a sample, keeping at most SAMPLE_WINDOW of them. Velocity is measured
+ * across this window so a release reflects the recent flick rather than the
+ * whole gesture. Returns a new array; the input is not mutated.
+ */
+export function pushSample(
+	samples: PointerSample[],
+	sample: PointerSample,
+	max = SAMPLE_WINDOW
+): PointerSample[] {
+	const next = [...samples, sample];
+	return next.length > max ? next.slice(next.length - max) : next;
+}
+
+/** Average pointer velocity in px/s across the sample window; 0 if unknowable. */
+export function computeVelocity(samples: PointerSample[]): number {
 	if (samples.length < 2) return 0;
 	const first = samples[0];
 	const last = samples[samples.length - 1];
 	if (!first || !last) return 0;
 	const dt = (last.t - first.t) / 1000;
 	if (dt <= 0) return 0;
-	return (last.y - first.y) / dt;
+	const velocity = (last.y - first.y) / dt;
+	// A vanishingly small dt overflows the division to Infinity, which would
+	// then clear every velocity threshold and force a flick snap.
+	return Number.isFinite(velocity) ? velocity : 0;
 }
 
 function findScrollableAncestor(el: Element | null, stopAt: Element): HTMLElement | null {

@@ -1,0 +1,39 @@
+name: CI
+
+# The publish workflow only runs tests on a version tag, which is far too late
+# to learn that main is broken.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - run: npm ci
+
+      - name: Type check
+        run: npx svelte-check --tsconfig ./tsconfig.json
+
+      - name: Unit tests with coverage
+        run: npm run test:coverage
+
+      - name: Mutation tests
+        run: npm run test:mutation
+
+      - name: Upload mutation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report
+          path: reports/mutation/
+          if-no-files-found: ignore
+
+      - name: Verify the package builds
+        run: npm run package
