@@ -25,7 +25,9 @@
 		bottomTrailing: { justifyContent: 'flex-end', alignItems: 'flex-end' }
 	};
 
-	const style = $derived(alignmentStyles[alignment]);
+	// An unrecognised alignment (a JavaScript caller, or a value read from data)
+	// would otherwise read a property of undefined and crash the render.
+	const style = $derived(alignmentStyles[alignment] ?? alignmentStyles.center);
 </script>
 
 <div

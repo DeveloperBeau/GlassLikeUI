@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { render } from '@testing-library/svelte';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import { render, screen, fireEvent } from '@testing-library/svelte';
 import SheetWrapper from '../wrappers/SheetWrapper.svelte';
 
 describe('Sheet', () => {
@@ -95,6 +95,119 @@ describe('Sheet', () => {
 				props: { isOpen: true, class: 'my-sheet' }
 			});
 			expect(container.querySelector('.sheet-container')).toHaveClass('my-sheet');
+		});
+	});
+
+	describe('Dismissal', () => {
+		afterEach(() => {
+			document.body.style.overflow = '';
+		});
+
+		it('closes on Escape', async () => {
+			const onClose = vi.fn();
+			const { container } = render(SheetWrapper, { props: { isOpen: true, onClose } });
+
+			await fireEvent.keyDown(window, { key: 'Escape' });
+
+			expect(onClose).toHaveBeenCalledTimes(1);
+			expect(container.querySelector('.sheet-container')).toBeNull();
+		});
+
+		it('ignores other keys', async () => {
+			const onClose = vi.fn();
+			const { container } = render(SheetWrapper, { props: { isOpen: true, onClose } });
+
+			await fireEvent.keyDown(window, { key: 'Enter' });
+			await fireEvent.keyDown(window, { key: 'a' });
+
+			expect(onClose).not.toHaveBeenCalled();
+			expect(container.querySelector('.sheet-container')).toBeInTheDocument();
+		});
+
+		it('closes when the backdrop itself is clicked', async () => {
+			const onClose = vi.fn();
+			const { container } = render(SheetWrapper, { props: { isOpen: true, onClose } });
+
+			await fireEvent.click(container.querySelector('.sheet-backdrop')!);
+
+			expect(onClose).toHaveBeenCalledTimes(1);
+		});
+
+		// Clicks bubble from the sheet body to the backdrop; only a click that
+		// originated on the backdrop should dismiss.
+		it('stays open when the sheet body is clicked', async () => {
+			const onClose = vi.fn();
+			const { container } = render(SheetWrapper, { props: { isOpen: true, onClose } });
+
+			await fireEvent.click(container.querySelector('.sheet-container')!);
+
+			expect(onClose).not.toHaveBeenCalled();
+			expect(container.querySelector('.sheet-container')).toBeInTheDocument();
+		});
+
+		it('closes on Escape pressed while the backdrop has focus', async () => {
+			const onClose = vi.fn();
+			const { container } = render(SheetWrapper, { props: { isOpen: true, onClose } });
+
+			await fireEvent.keyDown(container.querySelector('.sheet-backdrop')!, { key: 'Escape' });
+
+			expect(onClose).toHaveBeenCalled();
+		});
+
+		it('closes via the header close button', async () => {
+			const onClose = vi.fn();
+			render(SheetWrapper, { props: { isOpen: true, title: 'Options', onClose } });
+
+			await fireEvent.click(screen.getByRole('button', { name: /close/i }));
+
+			expect(onClose).toHaveBeenCalledTimes(1);
+		});
+
+		it('does not require an onClose handler', async () => {
+			const { container } = render(SheetWrapper, { props: { isOpen: true } });
+			await fireEvent.keyDown(window, { key: 'Escape' });
+			expect(container.querySelector('.sheet-container')).toBeNull();
+		});
+
+		it('does nothing on Escape when already closed', async () => {
+			const onClose = vi.fn();
+			render(SheetWrapper, { props: { isOpen: false, onClose } });
+			await fireEvent.keyDown(window, { key: 'Escape' });
+			expect(onClose).not.toHaveBeenCalled();
+		});
+	});
+
+	describe('Body scroll lock', () => {
+		afterEach(() => {
+			document.body.style.overflow = '';
+		});
+
+		it('locks body scrolling while open', () => {
+			render(SheetWrapper, { props: { isOpen: true } });
+			expect(document.body.style.overflow).toBe('hidden');
+		});
+
+		it('leaves body scrolling alone while closed', () => {
+			render(SheetWrapper, { props: { isOpen: false } });
+			expect(document.body.style.overflow).toBe('');
+		});
+
+		it('restores body scrolling when dismissed', async () => {
+			render(SheetWrapper, { props: { isOpen: true } });
+			expect(document.body.style.overflow).toBe('hidden');
+
+			await fireEvent.keyDown(window, { key: 'Escape' });
+
+			expect(document.body.style.overflow).toBe('');
+		});
+
+		it('restores body scrolling when unmounted while still open', () => {
+			const { unmount } = render(SheetWrapper, { props: { isOpen: true } });
+			expect(document.body.style.overflow).toBe('hidden');
+
+			unmount();
+
+			expect(document.body.style.overflow).toBe('');
 		});
 	});
 });

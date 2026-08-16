@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { glassButtonVars, type ButtonVariant } from '../../constants/variants';
 
 	interface Props {
 		children: Snippet;
-		variant?: 'filled' | 'outlined' | 'plain' | 'tinted' | 'destructive';
+		variant?: ButtonVariant;
 		size?: 'sm' | 'md' | 'lg';
 		fullWidth?: boolean;
 		disabled?: boolean;
@@ -38,6 +39,16 @@
 	};
 
 	const styles = $derived(sizeStyles[size]);
+
+	// null for the solid variants, so they emit no backdrop-filter layer.
+	const glass = $derived(glassButtonVars(variant));
+	const glassStyle = $derived(
+		glass
+			? `--btn-glass-blur: ${glass.blur}px;
+			--btn-glass-saturation: ${glass.saturation};
+			--btn-glass-opacity: ${glass.opacity};`
+			: ''
+	);
 </script>
 
 {#if href}
@@ -48,10 +59,13 @@
 		class="button variant-{variant} size-{size} {className}"
 		class:full-width={fullWidth}
 		class:disabled
+		class:is-glass={!!glass}
+		class:is-tinted={glass?.tinted}
 		onclick={onclick}
 		style="
 			--btn-padding: {styles.padding};
 			--btn-font-size: {styles.fontSize};
+			{glassStyle}
 		"
 	>
 		{@render children()}
@@ -60,12 +74,15 @@
 	<button
 		class="button variant-{variant} size-{size} {className}"
 		class:full-width={fullWidth}
+		class:is-glass={!!glass}
+		class:is-tinted={glass?.tinted}
 		{disabled}
 		{onclick}
 		{type}
 		style="
 			--btn-padding: {styles.padding};
 			--btn-font-size: {styles.fontSize};
+			{glassStyle}
 		"
 	>
 		{@render children()}
@@ -158,6 +175,69 @@
 
 	.button.variant-tinted:active {
 		background: var(--color-accent-10);
+	}
+
+	/* Glass variants (SwiftUI .glass / .glassProminent) */
+	.button.is-glass {
+		background: transparent;
+		color: var(--color-text);
+		isolation: isolate;
+	}
+
+	.button.is-glass::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		border-radius: inherit;
+		background: rgba(255, 255, 255, var(--btn-glass-opacity));
+		backdrop-filter: blur(var(--btn-glass-blur)) saturate(var(--btn-glass-saturation));
+		-webkit-backdrop-filter: blur(var(--btn-glass-blur)) saturate(var(--btn-glass-saturation));
+		pointer-events: none;
+	}
+
+	.button.is-glass::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		border-radius: inherit;
+		pointer-events: none;
+		border: var(--glass-border-width) solid var(--glass-border);
+		box-shadow: inset 0 1px 0 0 var(--glass-highlight);
+	}
+
+	.button.is-glass > :global(*) {
+		position: relative;
+		z-index: 2;
+	}
+
+	.button.is-glass:hover::before {
+		background: rgba(255, 255, 255, calc(var(--btn-glass-opacity) * 1.35));
+	}
+
+	.button.is-glass:active::before {
+		background: rgba(255, 255, 255, calc(var(--btn-glass-opacity) * 0.8));
+	}
+
+	.button.is-glass.is-tinted {
+		color: var(--color-accent);
+	}
+
+	.button.is-glass.is-tinted::before {
+		background: color-mix(
+			in srgb,
+			var(--color-accent) calc(var(--btn-glass-opacity) * 100%),
+			transparent
+		);
+	}
+
+	.button.is-glass.is-tinted:hover::before {
+		background: color-mix(
+			in srgb,
+			var(--color-accent) calc(var(--btn-glass-opacity) * 135%),
+			transparent
+		);
 	}
 
 	/* Destructive variant */

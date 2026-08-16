@@ -10,6 +10,8 @@
 		initialDetent?: SheetDetentName;
 		showHandle?: boolean;
 		draggable?: boolean;
+		onClose?: () => void;
+		onDetentChange?: (name: SheetDetentName) => void;
 		class?: string;
 	}
 
@@ -21,8 +23,15 @@
 		initialDetent = 'medium',
 		showHandle = true,
 		draggable = true,
+		onClose,
+		onDetentChange,
 		class: className = ''
 	}: Props = $props();
+
+	const rest = $derived({
+		...(onClose === undefined ? {} : { onClose }),
+		...(onDetentChange === undefined ? {} : { onDetentChange })
+	});
 </script>
 
 <Sheet
@@ -32,6 +41,7 @@
 	{initialDetent}
 	{showHandle}
 	{draggable}
+	{...rest}
 	class={className}
 >
 	{#snippet children()}

@@ -18,9 +18,17 @@
 		destructive = false,
 		class: className = ''
 	}: Props = $props();
+
+	// Spread conditionally so an omitted prop stays omitted, which
+	// `exactOptionalPropertyTypes` distinguishes from an explicit undefined.
+	const rest = $derived({
+		...(icon === undefined ? {} : { icon }),
+		...(href === undefined ? {} : { href }),
+		...(onclick === undefined ? {} : { onclick })
+	});
 </script>
 
-<MenuItem {icon} {href} {onclick} {destructive} class={className}>
+<MenuItem {...rest} {destructive} class={className}>
 	{#snippet children()}
 		{label}
 	{/snippet}

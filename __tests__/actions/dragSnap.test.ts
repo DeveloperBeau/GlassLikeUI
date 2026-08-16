@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import fc from 'fast-check';
 import {
 	dragSnap,
 	detentFractions,
@@ -22,14 +23,10 @@ function firePointerEvent(target: HTMLElement, type: string, init: PointerEventI
 }
 
 describe('detentFractions', () => {
-	it('maps named detents to fractions', () => {
-		const names: SheetDetentName[] = ['small', 'medium', 'large'];
-		const fractions = detentFractions(names);
-		expect(fractions).toEqual([
-			DEFAULT_DETENT_FRACTIONS.small,
-			DEFAULT_DETENT_FRACTIONS.medium,
-			DEFAULT_DETENT_FRACTIONS.large
-		]);
+	// Literal values, not DEFAULT_DETENT_FRACTIONS.*: comparing the mapper's
+	// output against the very constant it reads would pass for any values.
+	it('maps named detents to their documented fractions', () => {
+		expect(detentFractions(['small', 'medium', 'large'])).toEqual([0.25, 0.5, 0.9]);
 	});
 
 	it('returns empty array for empty input', () => {
@@ -39,9 +36,61 @@ describe('detentFractions', () => {
 	it('includes fullscreen as 1', () => {
 		expect(detentFractions(['fullscreen'])).toEqual([1]);
 	});
+
+	it('preserves the caller order rather than sorting', () => {
+		expect(detentFractions(['large', 'small'])).toEqual([0.9, 0.25]);
+	});
+
+	it('keeps duplicates', () => {
+		expect(detentFractions(['small', 'small'])).toEqual([0.25, 0.25]);
+	});
+
+	describe('fuzz', () => {
+		const name = fc.constantFrom<SheetDetentName>(
+			'small',
+			'medium',
+			'large',
+			'fullscreen'
+		);
+
+		// FALSE NEGATIVE validation: never drop or add an entry.
+		it('returns one fraction per name, positionally', () => {
+			fc.assert(
+				fc.property(fc.array(name), (names) => {
+					const out = detentFractions(names);
+					expect(out).toHaveLength(names.length);
+					names.forEach((n, i) => expect(out[i]).toBe(DEFAULT_DETENT_FRACTIONS[n]));
+				}),
+				{ numRuns: 500 }
+			);
+		});
+
+		// FALSE POSITIVE validation: never emit a fraction outside the usable
+		// range, which would put a sheet off-screen or inverted.
+		it('only ever emits fractions in (0, 1]', () => {
+			fc.assert(
+				fc.property(fc.array(name), (names) => {
+					for (const f of detentFractions(names)) {
+						expect(f).toBeGreaterThan(0);
+						expect(f).toBeLessThanOrEqual(1);
+					}
+				}),
+				{ numRuns: 500 }
+			);
+		});
+	});
 });
 
 describe('DEFAULT_DETENT_FRACTIONS', () => {
+	it('has exactly the four documented detents', () => {
+		expect(DEFAULT_DETENT_FRACTIONS).toEqual({
+			small: 0.25,
+			medium: 0.5,
+			large: 0.9,
+			fullscreen: 1
+		});
+	});
+
 	it('is monotonically increasing', () => {
 		expect(DEFAULT_DETENT_FRACTIONS.small).toBeLessThan(DEFAULT_DETENT_FRACTIONS.medium);
 		expect(DEFAULT_DETENT_FRACTIONS.medium).toBeLessThan(DEFAULT_DETENT_FRACTIONS.large);

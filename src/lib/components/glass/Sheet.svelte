@@ -51,6 +51,9 @@
 	}
 
 	function handleKeydown(e: KeyboardEvent) {
+		// The window listener is always attached, so a closed sheet would
+		// otherwise fire onClose - and clear body overflow - on every Escape.
+		if (!isOpen) return;
 		if (e.key === 'Escape') {
 			close();
 		}

@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { Button } from '$lib';
+	import { Button, type ButtonVariant } from '$lib';
 
 	interface Props {
 		text?: string;
-		variant?: 'filled' | 'outlined' | 'plain' | 'tinted' | 'destructive';
+		variant?: ButtonVariant;
 		size?: 'sm' | 'md' | 'lg';
 		fullWidth?: boolean;
 		disabled?: boolean;

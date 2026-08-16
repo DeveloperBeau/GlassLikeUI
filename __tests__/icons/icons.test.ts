@@ -84,6 +84,69 @@ describe('Icons Module', () => {
 			expect(getIconPath('sun.max')).toBe(ICONS['sun.max']);
 			expect(getIconPath('arrow.up.right')).toBe(ICONS['arrow.up.right']);
 		});
+
+		describe('unknown-icon warning', () => {
+			const originalProcess = (globalThis as { process?: unknown }).process;
+
+			afterEach(() => {
+				(globalThis as { process?: unknown }).process = originalProcess;
+				vi.restoreAllMocks();
+			});
+
+			it('warns during development so the typo is noticed', () => {
+				const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+				(globalThis as { process?: unknown }).process = { env: { NODE_ENV: 'development' } };
+
+				getIconPath('definitely-not-an-icon');
+
+				expect(warn).toHaveBeenCalledTimes(1);
+				expect(warn.mock.calls[0]![0]).toContain('definitely-not-an-icon');
+			});
+
+			// Shipping a warn on every unknown icon would spam production consoles.
+			it('stays silent in production', () => {
+				const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+				(globalThis as { process?: unknown }).process = { env: { NODE_ENV: 'production' } };
+
+				getIconPath('definitely-not-an-icon');
+
+				expect(warn).not.toHaveBeenCalled();
+			});
+
+			it('warns when there is no process object at all (browser bundle)', () => {
+				const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+				delete (globalThis as { process?: unknown }).process;
+
+				getIconPath('definitely-not-an-icon');
+
+				expect(warn).toHaveBeenCalledTimes(1);
+			});
+
+			it('warns when process exists but carries no env', () => {
+				const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+				(globalThis as { process?: unknown }).process = {};
+
+				getIconPath('definitely-not-an-icon');
+
+				expect(warn).toHaveBeenCalledTimes(1);
+			});
+
+			it('does not warn for an icon that exists', () => {
+				const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+				(globalThis as { process?: unknown }).process = { env: { NODE_ENV: 'development' } };
+
+				getIconPath('star');
+
+				expect(warn).not.toHaveBeenCalled();
+			});
+
+			it('still returns the fallback icon while warning', () => {
+				vi.spyOn(console, 'warn').mockImplementation(() => {});
+				(globalThis as { process?: unknown }).process = { env: { NODE_ENV: 'development' } };
+
+				expect(getIconPath('definitely-not-an-icon')).toBe(ICONS[DEFAULT_ICON]);
+			});
+		});
 	});
 
 	describe('hasIcon', () => {

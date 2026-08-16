@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Glass } from '$lib';
-	import type { GlassVariant, GlassIntensity } from '$lib';
+	import type { GlassVariant, GlassIntensity, GlassShape } from '$lib';
 
 	interface Props {
 		content?: string;
@@ -8,6 +8,7 @@
 		intensity?: GlassIntensity;
 		tint?: string;
 		cornerRadius?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+		shape?: GlassShape;
 		padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 		shadow?: boolean;
 		interactive?: boolean;
@@ -22,6 +23,7 @@
 		intensity = 'standard',
 		tint = '',
 		cornerRadius = 'lg',
+		shape = 'rect',
 		padding = 'md',
 		shadow = true,
 		interactive = false,
@@ -36,6 +38,7 @@
 	{intensity}
 	{tint}
 	{cornerRadius}
+	{shape}
 	{padding}
 	{shadow}
 	{interactive}
