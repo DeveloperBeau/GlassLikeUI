@@ -1,5 +1,40 @@
 # Changelog
 
+## 1.6.0
+
+### Added
+
+- `Button` accepts `glass` and `glassProminent` variants, mirroring iOS 26's
+  `GlassButtonStyle` and `GlassProminentButtonStyle`. Blur, saturation and
+  opacity resolve from the shared intensity tokens rather than being copied
+  into the stylesheet, so button glass cannot drift from surface glass.
+- `Glass` accepts `shape`: `rect` (default), `capsule`, or `circle`, mirroring
+  SwiftUI's `glassEffect(_:in:)`. A shape overrides `cornerRadius` entirely;
+  `circle` also pins a 1:1 box, since a 50% radius alone renders an ellipse.
+- `Label`, an icon and title pair with the four SwiftUI label styles
+  (`automatic`, `titleAndIcon`, `iconOnly`, `titleOnly`). `iconOnly` hides the
+  title visually rather than removing it, so the control keeps its accessible
+  name.
+- `Toggle`, an iOS-style switch built on a native checkbox with
+  `role="switch"`, so the platform supplies focus handling and Space
+  activation.
+- `ListRow` accepts a `swipeActions` snippet alongside `swipeEdge`,
+  `allowsFullSwipe` and `onFullSwipe`, mirroring SwiftUI's
+  `.swipeActions(edge:allowsFullSwipe:)`. Releasing is velocity-aware, and a
+  flick back cancels a pending full swipe.
+- `ScrollView` accepts `onRefresh` and `refreshThreshold`, mirroring SwiftUI's
+  `.refreshable`. The indicator stays up until the returned promise settles,
+  rejections included, so a failed refresh cannot strand the spinner.
+- Two new actions for use in your own markup: `swipeActions` and
+  `refreshable`. They drive `--swipe-x` / `--refresh-pull` and
+  `data-swipe-state` / `data-refresh-phase`; style off those.
+
+### Fixed
+
+- The Components table in `README.md` listed `Button` and `IconButton` in one
+  row, implying `IconButton` accepts variants it does not. They are now listed
+  separately.
+
 ## 1.5.0
 
 ### Added

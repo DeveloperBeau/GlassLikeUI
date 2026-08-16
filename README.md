@@ -83,7 +83,8 @@ attributes on non-Safari browsers:
 | `NavigationBar`          | Top chrome; supports `largeTitle` collapse.      |
 | `NavigationLink`         | Pill-style link.                                 |
 | `TabView`                | Floating tab bar.                                |
-| `Button` / `IconButton`  | `filled` / `outlined` / `plain` / `tinted` / `destructive` / `glass` / `glassProminent`. |
+| `Button`                 | `filled` / `outlined` / `plain` / `tinted` / `destructive` / `glass` / `glassProminent`. |
+| `IconButton`             | `plain` / `filled`.                              |
 | `Toggle`                 | iOS-style switch over a native checkbox.         |
 | `Badge`                  | `default` / `accent`.                            |
 | `Text`                   | Dynamic-Type-aware text.                         |
