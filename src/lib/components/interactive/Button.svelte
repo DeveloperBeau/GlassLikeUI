@@ -184,11 +184,13 @@
 		isolation: isolate;
 	}
 
+	/* Both layers sit at negative z-index inside the isolated button: behind the
+	   label, which is unpositioned and would otherwise be painted over. */
 	.button.is-glass::before {
 		content: '';
 		position: absolute;
 		inset: 0;
-		z-index: 0;
+		z-index: -1;
 		border-radius: inherit;
 		background: rgba(255, 255, 255, var(--btn-glass-opacity));
 		backdrop-filter: blur(var(--btn-glass-blur)) saturate(var(--btn-glass-saturation));
@@ -200,7 +202,7 @@
 		content: '';
 		position: absolute;
 		inset: 0;
-		z-index: 1;
+		z-index: -1;
 		border-radius: inherit;
 		pointer-events: none;
 		border: var(--glass-border-width) solid var(--glass-border);

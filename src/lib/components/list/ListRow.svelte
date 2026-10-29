@@ -158,7 +158,9 @@
 		background: var(--glass-active-subtle);
 	}
 
-	:global(.row-content) {
+	/* Scoped under .list-row so it outranks HStack's own padding reset
+	   (.hstack.svelte-x) instead of depending on stylesheet order. */
+	.list-row :global(.row-content) {
 		padding: var(--spacing-sm) var(--spacing-md);
 		min-height: 44px;
 	}

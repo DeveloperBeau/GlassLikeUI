@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- Glass `Button` labels render at full contrast. The frost and rim layers were
+  positioned at `z-index` 0 and 1, so they painted over a bare-text label and
+  washed it out; element children were already lifted, which hid the bug for
+  icon buttons. Both layers now sit at `z-index: -1` inside the button's
+  isolated stacking context, behind any content.
+- `ListRow` keeps its inset. `HStack`'s scoped `padding` reset outranked the
+  row's `.row-content` padding, so rows rendered flush to the edge. The inset
+  is now scoped under `.list-row` and wins on specificity rather than
+  stylesheet order.
+
 ## 1.6.0
 
 ### Added
